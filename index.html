@@ -1,477 +1,683 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Lokaya_API — Free Fire Player Lookup</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{
-  --ink:#0f2540; --mut:#5b728f; --line:rgba(255,255,255,.7);
-  --blue:#2563eb; --sky:#0ea5e9;
-  --glass:rgba(255,255,255,.62); --stroke:rgba(15,37,64,.09);
-  --sh:0 8px 32px rgba(15,37,64,.10); --r:20px;
-}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',sans-serif;color:var(--ink);min-height:100vh;background:#f6f9ff;padding:18px 14px 40px}
-.bg{position:fixed;inset:0;z-index:-1;overflow:hidden;background:linear-gradient(180deg,#fbfdff,#eef4ff)}
-.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5}
-.b1{width:480px;height:480px;left:-140px;top:-140px;background:#bfdbfe}
-.b2{width:420px;height:420px;right:-120px;top:6%;background:#ddd6fe}
-.b3{width:520px;height:520px;left:30%;bottom:-260px;background:#bae6fd}
+  :root {
+    --bg: #0d0f14;
+    --bg2: #13161d;
+    --glass: rgba(255,255,255,0.04);
+    --glass-border: rgba(255,255,255,0.09);
+    --glass-hover: rgba(255,255,255,0.07);
+    --accent: #ff6b35;
+    --accent2: #ff9c6e;
+    --accent-glow: rgba(255,107,53,0.18);
+    --green: #4ade80;
+    --red: #f87171;
+    --yellow: #fbbf24;
+    --text: #f0f2f7;
+    --text2: #8b92a8;
+    --text3: #555c70;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
 
-.glass{background:var(--glass);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
-  border:1px solid var(--line);outline:1px solid var(--stroke);border-radius:var(--r);box-shadow:var(--sh)}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-.nav{max-width:960px;margin:0 auto;padding:12px 18px;display:flex;justify-content:space-between;align-items:center}
-.logo{display:flex;align-items:center;gap:10px;font-family:'Outfit';font-weight:800;font-size:1.1rem}
-.logo-mark{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;color:#fff;font-weight:800;
-  background:linear-gradient(135deg,var(--blue),var(--sky));box-shadow:0 6px 14px rgba(37,99,235,.35)}
-.logo-name b{color:var(--blue)}
-.live{font-size:.78rem;font-weight:600;color:#047857;background:rgba(236,253,245,.8);
-  border:1px solid #a7f3d0;padding:6px 14px;border-radius:999px;display:flex;align-items:center;gap:8px}
-.pulse{width:8px;height:8px;border-radius:50%;background:#10b981;box-shadow:0 0 8px #10b981;animation:pl 2s infinite}
-@keyframes pl{50%{opacity:.35}}
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
 
-.wrap{max-width:960px;margin:0 auto}
-.hero{text-align:center;margin:34px 0 20px}
-.hero h1{font-family:'Outfit';font-size:clamp(1.8rem,5vw,2.6rem);font-weight:800;letter-spacing:-.5px}
-.hero p{color:var(--mut);margin-top:8px}
+  /* Background mesh */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 10% 0%, rgba(255,107,53,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 90% 100%, rgba(99,102,241,0.06) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
 
-.search{padding:20px;margin-bottom:16px}
-.row{display:flex;gap:10px}
-#uid{flex:1;border:2px solid transparent;background:rgba(255,255,255,.85);border-radius:14px;
-  padding:14px 16px;font-size:1rem;outline:none;color:var(--ink)}
-#uid:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(37,99,235,.12)}
-#go{border:none;cursor:pointer;color:#fff;font-weight:700;font-size:.95rem;padding:0 26px;border-radius:14px;
-  background:linear-gradient(135deg,var(--blue),var(--sky));box-shadow:0 8px 18px rgba(37,99,235,.35);
-  display:flex;align-items:center;gap:8px}
-#go:disabled{opacity:.6;cursor:wait}
-.hist{display:flex;gap:8px;align-items:center;margin-top:12px;font-size:.8rem;color:var(--mut);flex-wrap:wrap}
-.hist-chips{display:flex;gap:8px;flex-wrap:wrap}
-.hist-chips button{border:1px solid var(--stroke);background:rgba(255,255,255,.8);border-radius:999px;
-  padding:5px 14px;font-size:.78rem;font-weight:600;color:var(--blue);cursor:pointer}
-.hist-chips button:hover{background:#dbeafe}
-#histClear{border:none;background:transparent;color:var(--mut);cursor:pointer;font-size:.85rem;padding:5px 8px;border-radius:8px}
-#histClear:hover{color:#b91c1c}
-.dl-row{display:flex;gap:10px;justify-content:center;margin-top:12px;flex-wrap:wrap}
-.dl-row button{border:2px solid var(--blue);background:#fff;color:var(--blue);border-radius:12px;
-  padding:9px 22px;font-weight:700;font-size:.82rem;cursor:pointer}
-.dl-row button:hover{background:var(--blue);color:#fff}
-.dl-row button i{margin-right:6px}
+  .wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 16px 60px;
+  }
 
-.err{padding:14px 18px;color:#b91c1c;background:rgba(254,226,226,.75);font-size:.9rem;margin-bottom:16px}
-.empty{text-align:center;padding:56px 20px;color:var(--mut)}
-.empty-ico{width:72px;height:72px;margin:0 auto 14px;border-radius:22px;display:grid;place-items:center;
-  font-size:1.7rem;color:var(--blue);background:rgba(219,234,254,.7);border:1px solid #bfdbfe}
-.empty h2{color:var(--ink);font-family:'Outfit';margin-bottom:6px}
+  /* ── Header ── */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 0 32px;
+  }
 
-.profile{padding:26px 22px;margin-bottom:16px;text-align:center}
-.p-top h2{font-family:'Outfit';font-size:1.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
-.pills{display:flex;gap:8px;justify-content:center;margin:12px 0;flex-wrap:wrap}
-.pill{background:rgba(255,255,255,.85);border:1px solid var(--stroke);border-radius:999px;
-  padding:6px 16px;font-size:.82rem;font-weight:600;color:var(--mut)}
-.pill b{color:var(--ink)} .pill i{color:#f43f5e;font-size:.75rem}
-.opened{display:inline-block;font-size:.8rem;font-weight:600;color:#fff;padding:7px 20px;border-radius:999px;
-  background:linear-gradient(135deg,var(--blue),var(--sky))}
-.banner{margin-top:18px;border-radius:14px;overflow:hidden;background:#0f2540;border:1px solid var(--stroke)}
-.banner img{width:100%;max-height:280px;object-fit:contain;display:block}
-.src{margin:12px auto 0;width:fit-content;font-size:.75rem;font-weight:700;color:var(--blue);
-  background:rgba(219,234,254,.7);border:1px solid #bfdbfe;padding:6px 16px;border-radius:999px}
+  .logo {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -.2px;
+    color: var(--text);
+  }
+  .logo span { color: var(--accent); }
 
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
-@media(max-width:640px){.grid{grid-template-columns:1fr}.row{flex-direction:column}#go{padding:14px}}
-.card{padding:18px}
-.card.wide{grid-column:1/-1}
-.card h3{font-family:'Outfit';font-size:.92rem;color:var(--blue);margin-bottom:12px;
-  padding-bottom:10px;border-bottom:1px solid var(--stroke)}
-.card h3 i{margin-right:8px}
-.card dl>div{display:flex;justify-content:space-between;gap:10px;font-size:.82rem;padding:5px 0}
-.card dt{color:var(--mut)} .card dd{font-weight:600;text-align:right;word-break:break-word}
-.clip{max-width:170px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cols{display:grid;grid-template-columns:repeat(2,1fr);gap:0 18px}
-.leader{margin-top:10px;font-size:.8rem;color:var(--mut);border-top:1px dashed var(--stroke);padding-top:10px;line-height:1.6}
-.actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
-.actions button{flex:1;border-radius:12px;padding:11px;font-weight:700;font-size:.85rem;cursor:pointer;min-width:140px}
-#again{border:2px solid var(--blue);background:#fff;color:var(--blue)}
-#again:hover{background:var(--blue);color:#fff}
-#rawToggle{border:none;background:linear-gradient(135deg,var(--blue),var(--sky));color:#fff}
-#rawCopy{border:2px solid var(--blue);background:#fff;color:var(--blue)}
-#rawCopy:hover{background:var(--blue);color:#fff}
-#raw{margin-top:12px;background:#0b1e3a;color:#7dd3fc;border-radius:12px;padding:14px;
-  font-size:.75rem;max-height:380px;overflow:auto;white-space:pre-wrap;word-break:break-all}
+  .badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text2);
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 4px 12px;
+  }
+  .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 6px var(--green);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
 
-footer{text-align:center;color:var(--mut);font-size:.82rem;margin-top:22px}
-footer b{color:var(--blue)}
+  /* ── Hero ── */
+  .hero { text-align: center; margin-bottom: 36px; }
+  .hero h1 {
+    font-size: clamp(26px, 5vw, 38px);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -.6px;
+    margin-bottom: 10px;
+  }
+  .hero h1 em {
+    font-style: normal;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero p {
+    font-size: 15px;
+    color: var(--text2);
+    max-width: 460px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* ── Search box ── */
+  .search-card {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 28px;
+    backdrop-filter: blur(12px);
+  }
+
+  .search-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .search-row input, .search-row select {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    padding: 11px 14px;
+    outline: none;
+    transition: border-color .2s, background .2s;
+  }
+
+  .search-row input { flex: 1; min-width: 160px; }
+  .search-row input::placeholder { color: var(--text3); }
+  .search-row input:focus {
+    border-color: var(--accent);
+    background: rgba(255,107,53,0.06);
+  }
+
+  .search-row select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238b92a8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+    min-width: 120px;
+    cursor: pointer;
+  }
+  .search-row select option { background: #1a1d27; }
+
+  .btn-search {
+    background: linear-gradient(135deg, var(--accent), #e85d28);
+    border: none;
+    border-radius: var(--radius-sm);
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 11px 24px;
+    cursor: pointer;
+    transition: opacity .2s, transform .1s;
+    white-space: nowrap;
+  }
+  .btn-search:hover { opacity: .9; }
+  .btn-search:active { transform: scale(.97); }
+  .btn-search:disabled { opacity: .45; cursor: not-allowed; }
+
+  .hint { font-size: 12px; color: var(--text3); margin-top: 10px; }
+  .hint code { color: var(--text2); font-family: 'JetBrains Mono', monospace; }
+
+  /* ── States ── */
+  #result { min-height: 200px; }
+
+  .empty-state {
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--text3);
+  }
+  .empty-state svg { opacity: .25; margin-bottom: 14px; }
+  .empty-state p { font-size: 14px; }
+
+  .loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 56px 20px;
+    color: var(--text2);
+    font-size: 14px;
+  }
+  .spinner {
+    width: 36px; height: 36px;
+    border: 3px solid var(--glass-border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .error-box {
+    background: rgba(248,113,113,0.07);
+    border: 1px solid rgba(248,113,113,0.2);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    font-size: 14px;
+    color: var(--red);
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .error-box svg { flex-shrink: 0; margin-top: 1px; }
+
+  /* ── Player card ── */
+  .player-card {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    backdrop-filter: blur(12px);
+    animation: fadeIn .35s ease;
+  }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+
+  /* Banner */
+  .banner-area {
+    position: relative;
+    height: 140px;
+    background: linear-gradient(135deg, #1a1d27, #252834);
+    overflow: hidden;
+  }
+  .banner-img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .banner-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 40%, rgba(13,15,20,.85) 100%);
+  }
+
+  /* Avatar row */
+  .avatar-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    padding: 0 20px;
+    margin-top: -36px;
+    position: relative;
+    z-index: 2;
+  }
+  .avatar-wrap {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    border: 3px solid var(--bg);
+    overflow: hidden;
+    background: var(--bg2);
+    flex-shrink: 0;
+  }
+  .avatar-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .player-name-block { padding-bottom: 6px; }
+  .player-name {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -.3px;
+    line-height: 1.2;
+  }
+  .player-uid {
+    font-size: 12px;
+    color: var(--text2);
+    font-family: 'JetBrains Mono', monospace;
+    margin-top: 2px;
+  }
+
+  /* Body */
+  .card-body { padding: 20px; }
+
+  /* Stats grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .stat {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-bottom: 5px;
+  }
+  .stat-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .stat-value.accent { color: var(--accent); }
+  .stat-value.green { color: var(--green); }
+
+  /* Sections */
+  .section { margin-bottom: 16px; }
+  .section-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: .7px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--glass-border);
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  @media (max-width: 420px) { .info-grid { grid-template-columns: 1fr; } }
+
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    padding: 8px 12px;
+    background: rgba(255,255,255,0.025);
+    border-radius: var(--radius-sm);
+  }
+  .info-key { color: var(--text2); }
+  .info-val {
+    font-weight: 500;
+    color: var(--text);
+    text-align: right;
+    max-width: 55%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Region badge */
+  .region-pill {
+    display: inline-flex;
+    align-items: center;
+    background: var(--accent-glow);
+    border: 1px solid rgba(255,107,53,.3);
+    border-radius: 20px;
+    padding: 2px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent2);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* JSON toggle */
+  .json-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 18px;
+    font-size: 13px;
+    color: var(--text2);
+    cursor: pointer;
+    user-select: none;
+    width: fit-content;
+  }
+  .json-toggle:hover { color: var(--text); }
+  .json-toggle svg { transition: transform .2s; }
+  .json-toggle.open svg { transform: rotate(180deg); }
+
+  .json-pre {
+    margin-top: 10px;
+    background: rgba(0,0,0,.35);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    font-size: 11.5px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text2);
+    overflow-x: auto;
+    max-height: 320px;
+    overflow-y: auto;
+    white-space: pre;
+    display: none;
+  }
+  .json-pre.visible { display: block; }
+
+  /* Copy button */
+  .copy-btn {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    color: var(--text2);
+    font-size: 12px;
+    padding: 4px 12px;
+    cursor: pointer;
+    transition: background .2s, color .2s;
+    font-family: 'Inter', sans-serif;
+  }
+  .copy-btn:hover { background: var(--glass-hover); color: var(--text); }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    padding-top: 40px;
+    font-size: 12px;
+    color: var(--text3);
+  }
+  footer a { color: var(--text2); text-decoration: none; }
+  footer a:hover { color: var(--accent); }
 </style>
 </head>
 <body>
+<div class="wrap">
 
-<div class="bg" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+  <header>
+    <div class="logo">Lokaya<span>_API</span></div>
+    <div class="badge"><div class="dot"></div> Online · OB55</div>
+  </header>
 
-<nav class="glass nav">
-  <div class="logo"><span class="logo-mark">L</span><span class="logo-name">Lokaya_<b>API</b></span></div>
-  <div class="live"><span class="pulse"></span>Online · <span id="obVer">—</span></div>
-</nav>
+  <div class="hero">
+    <h1>Free Fire<br><em>Player Lookup</em></h1>
+    <p>Ingresa un UID para ver stats en vivo, rangos, gremio e imágenes oficiales del perfil.</p>
+  </div>
 
-<main class="wrap">
-
-  <section class="hero">
-    <h1>Free Fire Player Lookup</h1>
-    <p>Paste a UID and get live stats, ranks, guild info and official profile media.</p>
-  </section>
-
-  <section class="glass search">
-    <form id="frm" autocomplete="off">
-      <div class="row">
-        <input id="uid" type="text" inputmode="numeric" placeholder="Enter player UID">
-        <button id="go" type="submit"><i class="fa-solid fa-magnifying-glass"></i><span id="goTxt">Search</span></button>
-      </div>
-    </form>
-    <div id="hist" class="hist" hidden>
-      <span>Recent</span>
-      <div id="histChips" class="hist-chips"></div>
-      <button type="button" id="histClear" title="Clear history"><i class="fa-solid fa-xmark"></i></button>
+  <div class="search-card">
+    <div class="search-row">
+      <input type="text" id="uid-input" placeholder="UID del jugador (ej: 4422076728)" maxlength="20" inputmode="numeric">
+      <select id="region-select">
+        <option value="">Auto-detect</option>
+        <option value="BD">BD</option>
+        <option value="IND">IND</option>
+        <option value="SG">SG</option>
+        <option value="VN">VN</option>
+        <option value="TH">TH</option>
+        <option value="BR">BR</option>
+        <option value="US">US</option>
+        <option value="NA">NA</option>
+        <option value="SAC">SAC</option>
+        <option value="ID">ID</option>
+        <option value="RU">RU</option>
+        <option value="TW">TW</option>
+        <option value="ME">ME</option>
+        <option value="PK">PK</option>
+        <option value="CIS">CIS</option>
+        <option value="EUROPE">EUROPE</option>
+      </select>
+      <button class="btn-search" id="search-btn" onclick="lookup()">Buscar</button>
     </div>
-  </section>
+    <p class="hint">Powered by <code>freefire-idinfo.vercel.app</code> · CORS habilitado</p>
+  </div>
 
-  <div id="err" class="glass err" hidden></div>
-
-  <section id="empty" class="glass empty">
-    <div class="empty-ico"><i class="fa-solid fa-gamepad"></i></div>
-    <h2>No player loaded yet</h2>
-    <p>Search a UID above — the profile card will appear here.</p>
-  </section>
-
-  <section id="out" hidden>
-
-    <div class="glass profile">
-      <div class="p-top">
-        <h2 id="pName">—</h2>
-        <div class="pills">
-          <span class="pill">Lv <b id="pLvl">—</b></span>
-          <span class="pill"><i class="fa-solid fa-heart"></i> <b id="pLikes">—</b></span>
-          <span class="pill" id="pRegion">—</span>
-          <span class="pill"><i class="fa-solid fa-star"></i> <b id="pCredit">—</b></span>
-          <span class="pill"><i class="fa-solid fa-gem"></i> <b id="pDiamonds">—</b></span>
-        </div>
-        <div class="opened"><i class="fa-regular fa-calendar-check"></i> ID opened · <span id="pSince">—</span></div>
-      </div>
-      <div class="banner"><img id="pBanner" alt="player banner"></div>
-      <div id="src" class="src">Official media loads after lookup</div>
-      <div class="dl-row">
-        <button type="button" id="dlBanner"><i class="fa-solid fa-download"></i>Banner</button>
-        <button type="button" id="dlAvatar"><i class="fa-solid fa-download"></i>Avatar</button>
-      </div>
+  <div id="result">
+    <div class="empty-state">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <p>Busca un UID — el perfil aparecerá aquí.</p>
     </div>
+  </div>
 
-    <div class="grid">
-      <div class="glass card">
-        <h3><i class="fa-solid fa-user"></i>Account</h3>
-        <dl>
-          <div><dt>UID</dt><dd id="cUid">—</dd></div>
-          <div><dt>Name</dt><dd id="cName">—</dd></div>
-          <div><dt>Level / EXP</dt><dd><span id="cLvl">—</span> / <span id="cExp">—</span></dd></div>
-          <div><dt>Region</dt><dd id="cRegion">—</dd></div>
-          <div><dt>Likes</dt><dd id="cLikes">—</dd></div>
-          <div><dt>Gender</dt><dd id="cGender">—</dd></div>
-          <div><dt>Language</dt><dd id="cLanguage">—</dd></div>
-          <div><dt>Mode</dt><dd id="cMode">—</dd></div>
-          <div><dt>Bio</dt><dd id="cBio" class="clip">—</dd></div>
-        </dl>
-      </div>
+  <footer>
+    <p>Proyecto no oficial · <a href="https://github.com/LokayaFx/FreeFire-Idinfo" target="_blank">GitHub</a> · No afiliado con Garena</p>
+  </footer>
 
-      <div class="glass card">
-        <h3><i class="fa-solid fa-trophy"></i>Ranks</h3>
-        <dl>
-          <div><dt>BR points</dt><dd id="rBr">—</dd></div>
-          <div><dt>BR rank</dt><dd id="rBrRank">—</dd></div>
-          <div><dt>BR max rank</dt><dd id="rBrMax">—</dd></div>
-          <div><dt>CS points</dt><dd id="rCs">—</dd></div>
-          <div><dt>CS rank</dt><dd id="rCsRank">—</dd></div>
-          <div><dt>CS max rank</dt><dd id="rCsMax">—</dd></div>
-          <div><dt>Season</dt><dd id="rSeason">—</dd></div>
-          <div><dt>Version</dt><dd id="rVer">—</dd></div>
-          <div><dt>Created</dt><dd id="rCreated">—</dd></div>
-          <div><dt>Last login</dt><dd id="rLogin">—</dd></div>
-        </dl>
-      </div>
-
-      <div class="glass card">
-        <h3><i class="fa-solid fa-shirt"></i>Loadout</h3>
-        <dl>
-          <div><dt>Avatar ID</dt><dd id="lAvatar">—</dd></div>
-          <div><dt>Banner ID</dt><dd id="lBanner">—</dd></div>
-          <div><dt>Character</dt><dd id="lChar">—</dd></div>
-          <div><dt>Awakened</dt><dd id="lAwake">—</dd></div>
-          <div><dt>Clothes</dt><dd id="lClothes">—</dd></div>
-          <div><dt>Skills</dt><dd id="lSkills">—</dd></div>
-          <div><dt>Badges</dt><dd id="lBadges">—</dd></div>
-          <div><dt>Title / Pin</dt><dd><span id="lTitle">—</span> / <span id="lPin">—</span></dd></div>
-        </dl>
-      </div>
-
-      <div class="glass card">
-        <h3><i class="fa-solid fa-paw"></i>Pet</h3>
-        <dl>
-          <div><dt>Pet ID</dt><dd id="tId">—</dd></div>
-          <div><dt>Level</dt><dd id="tLvl">—</dd></div>
-          <div><dt>EXP</dt><dd id="tExp">—</dd></div>
-          <div><dt>Selected</dt><dd id="tSel">—</dd></div>
-          <div><dt>Skill</dt><dd id="tSkill">—</dd></div>
-          <div><dt>Skin</dt><dd id="tSkin">—</dd></div>
-        </dl>
-      </div>
-
-      <div class="glass card wide">
-        <h3><i class="fa-solid fa-people-group"></i>Guild</h3>
-        <dl class="cols">
-          <div><dt>Name</dt><dd id="gName">—</dd></div>
-          <div><dt>ID</dt><dd id="gId">—</dd></div>
-          <div><dt>Level</dt><dd id="gLvl">—</dd></div>
-          <div><dt>Members</dt><dd id="gMem">—</dd></div>
-        </dl>
-        <p class="leader" id="gLeader">—</p>
-        <div class="actions">
-          <button type="button" id="again"><i class="fa-solid fa-rotate-left"></i>New search</button>
-          <button type="button" id="rawToggle"><i class="fa-solid fa-code"></i>Raw JSON</button>
-          <button type="button" id="rawCopy"><i class="fa-solid fa-copy"></i><span id="rawCopyTxt">Copy JSON</span></button>
-        </div>
-        <pre id="raw" hidden><code id="rawBody">{}</code></pre>
-      </div>
-    </div>
-
-  </section>
-
-  <footer>Powered by <b>Lokaya_API</b></footer>
-
-</main>
+</div>
 
 <script>
-const $ = (id) => document.getElementById(id);
-const state = { mediaUrl: null, bannerUrl: null, avatarUrl: null, uid: null, seq: 0 };
-const HIST_KEY = 'lokaya_hist';
+const API_BASE = 'https://freefire-idinfo.vercel.app';
+let currentData = null;
 
-const REGIONS = { BD:'Bangladesh', SG:'Singapore', VN:'Vietnam', IND:'India', BR:'Brazil',
-  US:'United States', NA:'North America', SAC:'South America', ID:'Indonesia', RU:'Russia',
-  TW:'Taiwan', TH:'Thailand', ME:'Middle East', PK:'Pakistan', CIS:'Commonwealth', EUROPE:'Europe', EU:'Europe' };
+async function lookup() {
+  const uid = document.getElementById('uid-input').value.trim();
+  const region = document.getElementById('region-select').value;
+  const btn = document.getElementById('search-btn');
+  const result = document.getElementById('result');
 
-const fmtInt = (v) => (v === undefined || v === null || v === '') ? '0' : Number(v).toLocaleString('en-US');
-const fmtDateTime = (ts) => {
-  if (!ts || ts === '0') return 'N/A';
-  const d = new Date(Number(ts) * 1000);
-  if (isNaN(d)) return ts;
-  return d.toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' }) +
-    ' at ' + d.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', hour12:true });
-};
-const fmtDate = (ts) => {
-  if (!ts || ts === '0') return 'N/A';
-  const d = new Date(Number(ts) * 1000);
-  return isNaN(d) ? ts : d.toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' });
-};
-const regionName = (c) => {
-  if (!c) return '—';
-  const n = REGIONS[String(c).toUpperCase()];
-  return n ? `${n} (${String(c).toUpperCase()})` : c;
-};
-const cleanEnum = (v) => (!v ? 'N/A' : String(v).replace(/^(Gender|Language|ModePrefer|RankShow)_/, '').replace(/_/g, ' '));
-const set = (id, v) => { const el = $(id); if (el) el.textContent = (v === undefined || v === null || v === '') ? 'N/A' : v; };
+  if (!uid || !/^\d{5,20}$/.test(uid)) {
+    showError('Ingresa un UID válido (solo números, 5-20 dígitos).');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Buscando...';
+  result.innerHTML = `<div class="loader"><div class="spinner"></div><span>Consultando servidores de Garena…</span></div>`;
+
+  try {
+    let url = `${API_BASE}/player-info?uid=${encodeURIComponent(uid)}`;
+    if (region) url += `&region=${encodeURIComponent(region)}`;
+
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (!res.ok || data.error) {
+      showError(data.error || `Error ${res.status} del servidor.`);
+      return;
+    }
+
+    currentData = data;
+    renderPlayer(data);
+  } catch (err) {
+    showError('No se pudo conectar a la API. Verifica tu conexión o intenta de nuevo.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Buscar';
+  }
+}
+
+function renderPlayer(data) {
+  const b = data.basicInfo || {};
+  const clan = data.clanBasicInfo || {};
+  const social = data.socialInfo || {};
+  const credit = data.creditScoreInfo || {};
+  const pet = data.petInfo || {};
+  const media = data.mediaInfo || {};
+
+  const bannerSrc = media.bannerUrl ? `${API_BASE}${media.bannerUrl}` : '';
+  const avatarSrc = media.avatarUrl ? `${API_BASE}${media.avatarUrl}` : '';
+
+  const level = b.level || '—';
+  const likes = b.liked ? Number(b.liked).toLocaleString() : '—';
+  const region = b.region || '—';
+  const version = b.releaseVersion || '—';
+  const exp = b.exp ? Number(b.exp).toLocaleString() : '—';
+  const rankBR = b.rankingPoints || '—';
+  const rankCS = b.csRankingPoints || '—';
+  const createAt = b.createAt ? new Date(Number(b.createAt) * 1000).toLocaleDateString() : '—';
+  const lastLogin = b.lastLoginAt ? new Date(Number(b.lastLoginAt) * 1000).toLocaleDateString() : '—';
+
+  const infoRows = (obj) => Object.entries(obj)
+    .filter(([k,v]) => v !== undefined && v !== null && v !== '' && k !== 'accountId')
+    .map(([k,v]) => `<div class="info-row"><span class="info-key">${camel(k)}</span><span class="info-val" title="${v}">${v}</span></div>`)
+    .join('');
+
+  document.getElementById('result').innerHTML = `
+    <div class="player-card">
+      <div class="banner-area">
+        ${bannerSrc ? `<img class="banner-img" src="${bannerSrc}" alt="Banner" onerror="this.style.display='none'">` : ''}
+        <div class="banner-overlay"></div>
+      </div>
+
+      <div class="avatar-row">
+        <div class="avatar-wrap">
+          ${avatarSrc ? `<img class="avatar-img" src="${avatarSrc}" alt="Avatar" onerror="this.outerHTML='<div class=\\'avatar-img\\' style=\\'display:flex;align-items:center;justify-content:center;font-size:28px\\'>🎮</div>'">` : '<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:28px">🎮</div>'}
+        </div>
+        <div class="player-name-block">
+          <div class="player-name">${esc(b.nickname || 'Desconocido')}</div>
+          <div class="player-uid">UID: ${esc(b.accountId || '—')} <span class="region-pill">${region}</span></div>
+        </div>
+      </div>
+
+      <div class="card-body">
+
+        <div class="stats-grid">
+          <div class="stat">
+            <div class="stat-label">Nivel</div>
+            <div class="stat-value accent">${level}</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">EXP</div>
+            <div class="stat-value">${exp}</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Likes</div>
+            <div class="stat-value green">♥ ${likes}</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Versión</div>
+            <div class="stat-value">${version}</div>
+          </div>
+          ${rankBR !== '—' ? `<div class="stat"><div class="stat-label">Rank BR</div><div class="stat-value">${rankBR}</div></div>` : ''}
+          ${rankCS !== '—' ? `<div class="stat"><div class="stat-label">Rank CS</div><div class="stat-value">${rankCS}</div></div>` : ''}
+        </div>
+
+        ${social.signature ? `<div class="section"><div class="section-title">Bio</div><div style="font-size:13px;color:var(--text2);padding:10px 12px;background:rgba(255,255,255,0.025);border-radius:8px;font-style:italic">"${esc(social.signature)}"</div></div>` : ''}
+
+        ${clan.clanName ? `
+        <div class="section">
+          <div class="section-title">Gremio</div>
+          <div class="info-grid">
+            <div class="info-row"><span class="info-key">Nombre</span><span class="info-val">${esc(clan.clanName)}</span></div>
+            ${clan.clanLevel ? `<div class="info-row"><span class="info-key">Nivel</span><span class="info-val">${clan.clanLevel}</span></div>` : ''}
+            ${clan.memberNum ? `<div class="info-row"><span class="info-key">Miembros</span><span class="info-val">${clan.memberNum}${clan.capacity ? ` / ${clan.capacity}` : ''}</span></div>` : ''}
+            ${clan.clanId ? `<div class="info-row"><span class="info-key">ID</span><span class="info-val" style="font-family:'JetBrains Mono',monospace;font-size:11px">${clan.clanId}</span></div>` : ''}
+          </div>
+        </div>` : ''}
+
+        <div class="section">
+          <div class="section-title">Perfil</div>
+          <div class="info-grid">
+            ${social.gender ? `<div class="info-row"><span class="info-key">Género</span><span class="info-val">${social.gender}</span></div>` : ''}
+            ${social.language ? `<div class="info-row"><span class="info-key">Idioma</span><span class="info-val">${social.language}</span></div>` : ''}
+            <div class="info-row"><span class="info-key">Creado</span><span class="info-val">${createAt}</span></div>
+            <div class="info-row"><span class="info-key">Últ. acceso</span><span class="info-val">${lastLogin}</span></div>
+            ${credit.creditScore ? `<div class="info-row"><span class="info-key">Credit Score</span><span class="info-val">${credit.creditScore}</span></div>` : ''}
+            ${pet.id ? `<div class="info-row"><span class="info-key">Pet ID</span><span class="info-val">${pet.id} Lv.${pet.level||'?'}</span></div>` : ''}
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+          <div class="json-toggle" id="json-toggle" onclick="toggleJson()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 18l6-6-6-6"/><path d="M8 6L2 12l6 6"/></svg>
+            Ver JSON completo
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <button class="copy-btn" onclick="copyJson()">Copiar JSON</button>
+        </div>
+        <pre class="json-pre" id="json-pre">${esc(JSON.stringify(currentData, null, 2))}</pre>
+      </div>
+    </div>`;
+}
 
 function showError(msg) {
-  const e = $('err');
-  e.textContent = msg;
-  e.hidden = false;
-  $('out').hidden = true;
-  $('empty').style.display = 'block';
+  document.getElementById('result').innerHTML = `
+    <div class="error-box">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      <span>${esc(msg)}</span>
+    </div>`;
 }
-function clearError() { $('err').hidden = true; $('err').textContent = ''; }
 
-async function loadBanner(url, seq) {
-  const img = $('pBanner'), src = $('src');
-  src.textContent = 'Loading official media…';
+function toggleJson() {
+  const pre = document.getElementById('json-pre');
+  const toggle = document.getElementById('json-toggle');
+  pre.classList.toggle('visible');
+  toggle.classList.toggle('open');
+  toggle.childNodes[2].textContent = pre.classList.contains('visible') ? ' Ocultar JSON' : ' Ver JSON completo';
+}
+
+async function copyJson() {
+  if (!currentData) return;
   try {
-    const r = await fetch(url, { headers: { Accept: 'image/webp' } });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    if (!(r.headers.get('content-type') || '').includes('image/webp')) throw new Error('not webp');
-    const blob = await r.blob();
-    if (seq !== state.seq) return;
-    if (state.mediaUrl) URL.revokeObjectURL(state.mediaUrl);
-    state.mediaUrl = URL.createObjectURL(blob);
-    img.src = state.mediaUrl;
-    const s = r.headers.get('x-free-fire-media-source') || '';
-    src.textContent = s === 'official-free-fire-cdn'
-      ? 'Official Free Fire CDN assets'
-      : 'Official asset with local fallback';
-  } catch {
-    if (seq !== state.seq) return;
-    src.textContent = 'Official asset unavailable · showing placeholder';
-  }
+    await navigator.clipboard.writeText(JSON.stringify(currentData, null, 2));
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = '¡Copiado!';
+    setTimeout(() => btn.textContent = 'Copiar JSON', 1800);
+  } catch {}
 }
 
-async function search(uid) {
-  uid = String(uid || '').trim();
-  if (!/^\d+$/.test(uid)) return showError('Please enter a numeric UID.');
-  const btn = $('go'), txt = $('goTxt');
-  btn.disabled = true; txt.textContent = 'Loading…';
-  clearError();
-  const seq = ++state.seq;
-  try {
-    const r = await fetch('/player-info?uid=' + encodeURIComponent(uid));
-    const d = await r.json();
-    if (!r.ok || d.error) throw new Error(d.error || 'Lookup failed.');
-    if (seq !== state.seq) return;
-
-    const b = d.basicInfo || {}, s = d.socialInfo || {}, cr = d.creditScoreInfo || {},
-          pet = d.petInfo || {}, clan = d.clanBasicInfo || {}, cap = d.captainBasicInfo || {},
-          prof = d.profileInfo || {}, dia = d.diamondCostRes || {};
-    const region = b.region || 'BD';
-
-    // Update version badge
-    if (b.releaseVersion) $('obVer').textContent = b.releaseVersion;
-
-    set('pName', b.nickname || 'N/A');
-    set('pLvl', b.level); $('pLikes').textContent = fmtInt(b.liked);
-    set('pRegion', regionName(region)); set('pSince', fmtDate(b.createAt));
-    set('pCredit', cr.creditScore);
-    set('pDiamonds', dia.diamondCost !== undefined ? fmtInt(dia.diamondCost) : 'N/A');
-
-    const bu = (d.mediaInfo && d.mediaInfo.bannerUrl) ||
-      `/api/banner/banner_${encodeURIComponent(uid)}.webp?region=${encodeURIComponent(region)}`;
-    const au = (d.mediaInfo && d.mediaInfo.avatarUrl) ||
-      `/api/avatar/avatar_${encodeURIComponent(uid)}.webp?region=${encodeURIComponent(region)}`;
-    state.bannerUrl = bu; state.avatarUrl = au; state.uid = uid;
-    loadBanner(bu, seq);
-
-    set('cUid', b.accountId || uid); set('cName', b.nickname);
-    set('cLvl', b.level); set('cExp', b.exp !== undefined ? fmtInt(b.exp) : 'N/A');
-    set('cRegion', regionName(region)); $('cLikes').textContent = fmtInt(b.liked);
-    set('cGender', cleanEnum(s.gender)); set('cLanguage', cleanEnum(s.language));
-    set('cMode', cleanEnum(s.modePrefer)); set('cBio', (s.signature || 'N/A'));
-
-    $('rBr').textContent = fmtInt(b.rankingPoints);
-    set('rBrRank', b.rank);
-    set('rBrMax', b.maxRank); $('rCs').textContent = fmtInt(b.csRankingPoints);
-    set('rCsRank', b.csRank); set('rCsMax', b.csMaxRank);
-    set('rSeason', b.seasonId); set('rVer', b.releaseVersion);
-    set('rCreated', fmtDateTime(b.createAt)); set('rLogin', fmtDateTime(b.lastLoginAt));
-
-    set('lAvatar', b.headPic); set('lBanner', b.bannerId);
-    set('lChar', prof.avatarId); set('lAwake', prof.isSelectedAwaken ? 'Yes' : 'No');
-    set('lClothes', Array.isArray(prof.clothes) ? prof.clothes.length + ' items' : 'N/A');
-    set('lSkills', Array.isArray(prof.equipedSkills) ? Math.floor(prof.equipedSkills.length / 4) + ' equipped' : 'N/A');
-    set('lBadges', b.badgeCnt); set('lTitle', b.title); set('lPin', b.pinId);
-
-    set('tId', pet.id); set('tLvl', pet.level);
-    set('tExp', pet.exp !== undefined ? fmtInt(pet.exp) : 'N/A');
-    set('tSel', pet.isSelected ? 'Yes' : 'No');
-    set('tSkill', pet.selectedSkillId); set('tSkin', pet.skinId);
-
-    set('gName', clan.clanName); set('gId', clan.clanId);
-    set('gLvl', clan.clanLevel);
-    set('gMem', clan.capacity ? `${clan.memberNum || 0}/${clan.capacity}` : 'N/A');
-    $('gLeader').textContent = (cap && cap.nickname)
-      ? `Leader: ${cap.nickname} · UID ${cap.accountId || 'N/A'} · Lv ${cap.level || 'N/A'} · ${fmtInt(cap.liked)} likes`
-      : 'No guild leader info';
-
-    $('rawBody').textContent = JSON.stringify(d, null, 2);
-    $('raw').hidden = true;
-    pushHistory(uid);
-
-    $('empty').style.display = 'none';
-    $('out').hidden = false;
-  } catch (e) {
-    if (seq !== state.seq) return;
-    showError(e.message);
-  } finally {
-    btn.disabled = false; txt.textContent = 'Search';
-  }
+function esc(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-function reset() {
-  state.seq++;
-  if (state.mediaUrl) { URL.revokeObjectURL(state.mediaUrl); state.mediaUrl = null; }
-  state.bannerUrl = state.avatarUrl = state.uid = null;
-  $('uid').value = ''; $('pBanner').removeAttribute('src');
-  $('out').hidden = true; $('raw').hidden = true;
-  clearError(); $('empty').style.display = 'block';
-  $('uid').focus();
+function camel(str) {
+  return str.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase());
 }
 
-async function downloadMedia(kind) {
-  const url = kind === 'avatar' ? state.avatarUrl : (state.mediaUrl || state.bannerUrl);
-  if (!url) return;
-  const name = `${kind}_${state.uid || 'player'}.webp`;
-  try {
-    const r = await fetch(url);
-    if (!r.ok) throw new Error('fetch failed');
-    const blob = await r.blob();
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = name;
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
-  } catch {
-    window.open(url, '_blank');
-  }
-}
-
-function getHistory() {
-  try { return JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); }
-  catch { return []; }
-}
-function pushHistory(uid) {
-  const h = [uid, ...getHistory().filter((x) => x !== uid)].slice(0, 8);
-  try { localStorage.setItem(HIST_KEY, JSON.stringify(h)); } catch {}
-  renderHistory();
-}
-function renderHistory() {
-  const h = getHistory(), box = $('hist'), chips = $('histChips');
-  chips.innerHTML = '';
-  if (!h.length) { box.hidden = true; return; }
-  box.hidden = false;
-  h.forEach((u) => {
-    const b = document.createElement('button');
-    b.type = 'button'; b.textContent = u;
-    b.addEventListener('click', () => { $('uid').value = u; search(u); });
-    chips.appendChild(b);
-  });
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  $('frm').addEventListener('submit', (e) => { e.preventDefault(); search($('uid').value); });
-  $('again').addEventListener('click', reset);
-  $('dlBanner').addEventListener('click', () => downloadMedia('banner'));
-  $('dlAvatar').addEventListener('click', () => downloadMedia('avatar'));
-  $('rawToggle').addEventListener('click', () => { $('raw').hidden = !$('raw').hidden; });
-  $('histClear').addEventListener('click', () => {
-    try { localStorage.removeItem(HIST_KEY); } catch {}
-    renderHistory();
-  });
-  renderHistory();
-  $('rawCopy').addEventListener('click', async () => {
-    const txt = $('rawBody').textContent || '{}';
-    const label = $('rawCopyTxt');
-    try {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        await navigator.clipboard.writeText(txt);
-      } else {
-        const ta = document.createElement('textarea');
-        ta.value = txt;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        ta.remove();
-      }
-      label.textContent = 'Copied!';
-    } catch {
-      label.textContent = 'Copy failed';
-    }
-    setTimeout(() => { label.textContent = 'Copy JSON'; }, 1500);
-  });
+// Enter key
+document.getElementById('uid-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') lookup();
 });
 </script>
 </body>
