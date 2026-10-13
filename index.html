@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Free Fire Player Lookup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root {
+  --bg: #0a0c10;
+  --surface: #12161e;
+  --card: #181d28;
+  --border: rgba(255,255,255,.07);
+  --accent: #f5a623;
+  --accent2: #e85d26;
+  --blue: #3b82f6;
+  --sky: #60a5fa;
+  --ink: #e8eaf0;
+  --mut: #6b7280;
+  --stroke: rgba(255,255,255,.1);
+  --green: #22c55e;
+  --pill-bg: rgba(255,255,255,.06);
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+*, *::before, *::after { box-sizing: inherit; margin: 0; padding: 0; }
+html, body { min-height: 100%; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  background-image: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(245,166,35,.12), transparent);
+}
+
+/* ── HEADER ── */
+header {
+  padding: 28px 24px 0;
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.logo-icon {
+  width: 40px; height: 40px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 10px;
+  display: grid; place-items: center;
+  font-size: 1.1rem; color: #fff;
+  flex-shrink: 0;
+}
+header h1 {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: .5px;
+  color: var(--ink);
+}
+header h1 span { color: var(--accent); }
+
+/* ── SEARCH ── */
+.search-wrap {
+  max-width: 760px;
+  margin: 28px auto 0;
+  padding: 0 24px;
+}
+.search-box {
+  display: flex;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--stroke);
+  border-radius: 14px;
+  padding: 8px 8px 8px 18px;
+  align-items: center;
+  transition: border-color .2s;
+}
+.search-box:focus-within { border-color: var(--accent); }
+.search-box i { color: var(--mut); font-size: .95rem; }
+.search-box input {
+  flex: 1; background: transparent; border: none; outline: none;
+  color: var(--ink); font-size: .95rem; font-family: 'Inter', sans-serif;
+  font-weight: 500;
+}
+.search-box input::placeholder { color: var(--mut); }
+#regionSel {
+  background: var(--card); border: 1px solid var(--stroke);
+  color: var(--ink); font-family: 'Inter', sans-serif; font-size: .82rem;
+  padding: 6px 10px; border-radius: 9px; cursor: pointer; outline: none;
+}
+#go {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border: none; border-radius: 10px; color: #fff;
+  font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 700;
+  padding: 10px 22px; cursor: pointer; display: flex; align-items: center; gap: 7px;
+  white-space: nowrap; transition: opacity .2s;
+}
+#go:disabled { opacity: .5; cursor: wait; }
+#go:hover:not(:disabled) { opacity: .88; }
+
+/* ── HISTORY ── */
+.hist {
+  display: flex; gap: 8px; align-items: center;
+  margin-top: 12px; font-size: .78rem; color: var(--mut); flex-wrap: wrap;
+}
+.hist-chips { display: flex; gap: 7px; flex-wrap: wrap; }
+.hist-chips button {
+  border: 1px solid var(--stroke); background: var(--pill-bg);
+  border-radius: 999px; padding: 4px 13px; font-size: .75rem;
+  font-weight: 600; color: var(--sky); cursor: pointer;
+  transition: background .15s;
+}
+.hist-chips button:hover { background: rgba(96,165,250,.15); }
+#histClear {
+  border: none; background: transparent; color: var(--mut);
+  cursor: pointer; font-size: .8rem; padding: 4px 7px; border-radius: 7px;
+}
+#histClear:hover { color: #f87171; }
+
+/* ── ERROR ── */
+.err {
+  max-width: 760px; margin: 16px auto 0; padding: 0 24px;
+}
+.err-inner {
+  padding: 13px 17px; color: #f87171;
+  background: rgba(248,113,113,.08); border: 1px solid rgba(248,113,113,.2);
+  border-radius: 12px; font-size: .88rem;
+}
+
+/* ── EMPTY ── */
+#empty {
+  max-width: 760px; margin: 64px auto; padding: 0 24px;
+  text-align: center; color: var(--mut);
+}
+#empty i { font-size: 2.5rem; margin-bottom: 14px; color: rgba(245,166,35,.3); display: block; }
+#empty p { font-size: .95rem; }
+
+/* ── MAIN OUTPUT ── */
+#out {
+  max-width: 760px; margin: 24px auto 40px; padding: 0 24px;
+}
+
+/* ── HERO CARD ── */
+.hero {
+  border-radius: 18px; overflow: hidden;
+  border: 1px solid var(--stroke);
+  background: var(--card);
+  margin-bottom: 18px;
+  position: relative;
+}
+.banner-wrap {
+  position: relative; height: 160px; background: #0d1117; overflow: hidden;
+}
+.banner-wrap img#pBanner {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  opacity: 0; transition: opacity .4s;
+}
+.banner-wrap img#pBanner.loaded { opacity: 1; }
+.banner-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, transparent 40%, var(--card));
+}
+.avatar-wrap {
+  position: absolute; bottom: -28px; left: 22px;
+  width: 72px; height: 72px;
+  border: 3px solid var(--card); border-radius: 50%;
+  overflow: hidden; background: var(--surface);
+}
+.avatar-wrap img {
+  width: 100%; height: 100%; object-fit: cover;
+  opacity: 0; transition: opacity .3s;
+}
+.avatar-wrap img.loaded { opacity: 1; }
+.hero-body {
+  padding: 40px 22px 20px;
+}
+.hero-name {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.7rem; font-weight: 700; line-height: 1.1;
+}
+.hero-meta {
+  display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px;
+}
+.pill {
+  background: var(--pill-bg); border: 1px solid var(--stroke);
+  border-radius: 999px; padding: 4px 12px;
+  font-size: .78rem; font-weight: 600; color: var(--ink);
+  display: flex; align-items: center; gap: 5px;
+}
+.pill i { color: var(--accent); font-size: .7rem; }
+.pill.green i { color: var(--green); }
+.pill.blue i { color: var(--sky); }
+.opened {
+  font-size: .78rem; color: var(--mut); margin-top: 10px;
+  display: flex; align-items: center; gap: 6px;
+}
+.dl-row {
+  display: flex; gap: 9px; margin-top: 16px; flex-wrap: wrap;
+}
+.dl-row button {
+  border: 1px solid var(--stroke); background: var(--pill-bg);
+  color: var(--ink); border-radius: 10px; padding: 8px 18px;
+  font-size: .8rem; font-weight: 600; cursor: pointer; display: flex;
+  align-items: center; gap: 6px; font-family: 'Inter', sans-serif;
+  transition: background .15s, border-color .15s;
+}
+.dl-row button:hover { background: rgba(255,255,255,.1); border-color: var(--accent); color: var(--accent); }
+
+/* ── GRID ── */
+.grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+}
+@media (max-width: 540px) { .grid { grid-template-columns: 1fr; } }
+
+.card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 18px 20px;
+}
+.card h3 {
+  font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 700;
+  color: var(--accent); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px; letter-spacing: .3px;
+}
+dl { display: flex; flex-direction: column; gap: 9px; }
+dl > div { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+dt { font-size: .75rem; color: var(--mut); font-weight: 500; white-space: nowrap; }
+dd { font-size: .82rem; font-weight: 600; color: var(--ink); text-align: right; word-break: break-all; }
+
+/* ── RAW ── */
+.raw-section { margin-top: 14px; }
+.raw-bar {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+}
+#rawToggle {
+  border: 1px solid var(--stroke); background: transparent; color: var(--mut);
+  border-radius: 9px; padding: 7px 16px; font-size: .78rem; cursor: pointer;
+  font-family: 'Inter', sans-serif; transition: border-color .15s;
+}
+#rawToggle:hover { border-color: var(--sky); color: var(--sky); }
+#rawCopy {
+  border: 1px solid var(--stroke); background: transparent; color: var(--mut);
+  border-radius: 9px; padding: 7px 14px; font-size: .78rem; cursor: pointer;
+  font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 6px;
+  transition: border-color .15s;
+}
+#rawCopy:hover { border-color: var(--green); color: var(--green); }
+#raw {
+  background: #0d1117; border: 1px solid var(--border); border-radius: 12px;
+  padding: 16px; overflow-x: auto; max-height: 380px; overflow-y: auto;
+}
+#rawBody {
+  font-family: 'Courier New', monospace; font-size: .72rem; color: #a5b4fc;
+  white-space: pre; line-height: 1.55;
+}
+
+/* ── AGAIN ── */
+#again {
+  margin-top: 18px; display: flex; align-items: center; gap: 8px;
+  border: 1px solid var(--stroke); background: transparent; color: var(--mut);
+  border-radius: 10px; padding: 9px 20px; font-size: .83rem; cursor: pointer;
+  font-family: 'Inter', sans-serif; transition: color .15s, border-color .15s;
+}
+#again:hover { color: var(--ink); border-color: var(--ink); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-icon"><i class="fa-solid fa-fire-flame-curved"></i></div>
+  <h1>Free Fire <span>Lookup</span></h1>
+</header>
+
+<div class="search-wrap">
+  <form id="frm">
+    <div class="search-box">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input id="uid" type="text" inputmode="numeric" placeholder="Enter player UID…" autocomplete="off">
+      <select id="regionSel">
+        <option value="BD">BD</option>
+        <option value="SG">SG</option>
+        <option value="VN">VN</option>
+        <option value="IND">IND</option>
+        <option value="BR">BR</option>
+        <option value="US">US</option>
+        <option value="NA">NA</option>
+        <option value="SAC">SAC</option>
+        <option value="ID">ID</option>
+        <option value="RU">RU</option>
+        <option value="TH">TH</option>
+        <option value="TW">TW</option>
+        <option value="ME">ME</option>
+        <option value="PK">PK</option>
+        <option value="CIS">CIS</option>
+        <option value="LAC">LAC</option>
+      </select>
+      <button id="go" type="submit"><i class="fa-solid fa-bolt"></i><span id="goTxt">Search</span></button>
+    </div>
+  </form>
+  <div id="hist" class="hist" hidden>
+    <span>Recent</span>
+    <div id="histChips" class="hist-chips"></div>
+    <button type="button" id="histClear" title="Clear history"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+</div>
+
+<div class="err" id="errWrap" hidden><div class="err-inner" id="errMsg"></div></div>
+
+<div id="empty">
+  <i class="fa-solid fa-crosshairs"></i>
+  <p>Enter a UID and region to look up a Free Fire player.</p>
+</div>
+
+<div id="out" hidden>
+  <!-- HERO -->
+  <div class="hero">
+    <div class="banner-wrap">
+      <img id="pBanner" alt="banner">
+      <div class="banner-overlay"></div>
+      <div class="avatar-wrap"><img id="pAvatar" alt="avatar"></div>
+    </div>
+    <div class="hero-body">
+      <div class="hero-name" id="pName">—</div>
+      <div class="hero-meta">
+        <span class="pill"><i class="fa-solid fa-signal"></i> Lv <b id="pLvl">—</b></span>
+        <span class="pill green"><i class="fa-solid fa-heart"></i> <b id="pLikes">—</b></span>
+        <span class="pill blue"><i class="fa-solid fa-globe"></i> <span id="pRegion">—</span></span>
+        <span class="pill"><i class="fa-solid fa-star"></i> Credit <b id="pCredit">—</b></span>
+        <span class="pill"><i class="fa-solid fa-gem"></i> <b id="pDiamonds">—</b></span>
+      </div>
+      <div class="opened"><i class="fa-regular fa-calendar-check"></i> Account opened · <span id="pSince">—</span></div>
+      <div class="dl-row">
+        <button type="button" id="dlBanner"><i class="fa-solid fa-image"></i> Banner</button>
+        <button type="button" id="dlAvatar"><i class="fa-solid fa-user-circle"></i> Avatar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GRID -->
+  <div class="grid">
+    <!-- Account -->
+    <div class="card">
+      <h3><i class="fa-solid fa-user"></i> Account</h3>
+      <dl>
+        <div><dt>UID</dt><dd id="cUid">—</dd></div>
+        <div><dt>Nickname</dt><dd id="cName">—</dd></div>
+        <div><dt>Region</dt><dd id="cRegion">—</dd></div>
+        <div><dt>Guild</dt><dd id="cGuild">—</dd></div>
+        <div><dt>Mode pref.</dt><dd id="cMode">—</dd></div>
+        <div><dt>Bio</dt><dd id="cBio" style="font-size:.74rem;color:var(--mut)">—</dd></div>
+      </dl>
+    </div>
+    <!-- Ranks -->
+    <div class="card">
+      <h3><i class="fa-solid fa-trophy"></i> Ranks</h3>
+      <dl>
+        <div><dt>BR points</dt><dd id="rBr">—</dd></div>
+        <div><dt>BR rank</dt><dd id="rBrRank">—</dd></div>
+        <div><dt>BR max rank</dt><dd id="rBrMax">—</dd></div>
+        <div><dt>CS points</dt><dd id="rCs">—</dd></div>
+        <div><dt>CS rank</dt><dd id="rCsRank">—</dd></div>
+        <div><dt>CS max rank</dt><dd id="rCsMax">—</dd></div>
+        <div><dt>Season</dt><dd id="rSeason">—</dd></div>
+        <div><dt>Version</dt><dd id="rVer">—</dd></div>
+      </dl>
+    </div>
+    <!-- Lookups -->
+    <div class="card">
+      <h3><i class="fa-solid fa-id-card"></i> IDs</h3>
+      <dl>
+        <div><dt>Avatar ID</dt><dd id="lAvatar">—</dd></div>
+        <div><dt>Banner ID</dt><dd id="lBanner">—</dd></div>
+        <div><dt>Character</dt><dd id="lChar">—</dd></div>
+        <div><dt>Awaken</dt><dd id="lAwake">—</dd></div>
+      </dl>
+    </div>
+    <!-- Activity -->
+    <div class="card">
+      <h3><i class="fa-solid fa-clock-rotate-left"></i> Activity</h3>
+      <dl>
+        <div><dt>Created</dt><dd id="rCreated">—</dd></div>
+        <div><dt>Last login</dt><dd id="rLogin">—</dd></div>
+      </dl>
+    </div>
+  </div>
+
+  <!-- RAW -->
+  <div class="raw-section">
+    <div class="raw-bar">
+      <button id="rawToggle">Show raw JSON</button>
+      <button id="rawCopy"><i class="fa-regular fa-copy"></i><span id="rawCopyTxt">Copy</span></button>
+    </div>
+    <div id="raw" hidden><pre id="rawBody"></pre></div>
+  </div>
+
+  <button id="again"><i class="fa-solid fa-rotate-left"></i> New search</button>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const HIST_KEY = 'lokaya_hist';
+const state = { bannerUrl: null, avatarUrl: null, uid: null, seq: 0 };
+
+const REGIONS = {
+  BD:'Bangladesh', SG:'Singapore', VN:'Vietnam', IND:'India', BR:'Brazil',
+  US:'United States', NA:'North America', SAC:'South America', ID:'Indonesia',
+  RU:'Russia', TH:'Thailand', TW:'Taiwan', ME:'Middle East', PK:'Pakistan',
+  CIS:'CIS', LAC:'Latin America'
+};
+
+function set(id, val) { $(id).textContent = val ?? '—'; }
+function fmtInt(n) { return n != null ? Number(n).toLocaleString() : '—'; }
+function fmtDate(ts) { return ts ? new Date(ts * 1000).toLocaleDateString() : '—'; }
+function fmtDateTime(ts) { return ts ? new Date(ts * 1000).toLocaleString() : '—'; }
+function regionName(r) { return REGIONS[r] || r || '—'; }
+function cleanEnum(s) { return s ? s.replace(/^(EP_)?MODE_/i, '').replace(/_/g, ' ') : '—'; }
+
+function showError(msg) {
+  $('errMsg').textContent = msg;
+  $('errWrap').hidden = false;
+}
+function clearError() { $('errWrap').hidden = true; }
+
+function loadImg(imgEl, url, seq) {
+  if (!url) return;
+  const i = new Image();
+  i.onload = () => { if (state.seq === seq) { imgEl.src = url; imgEl.classList.add('loaded'); } };
+  i.onerror = () => {};
+  i.src = url;
+}
+
+async function search(uid) {
+  uid = (uid || '').trim();
+  if (!uid) return;
+  clearError();
+  const region = $('regionSel').value;
+  $('go').disabled = true; $('goTxt').textContent = 'Loading…';
+  $('out').hidden = true; $('empty').style.display = 'none';
+  $('raw').hidden = true;
+  const seq = ++state.seq;
+
+  try {
+    const res = await fetch(`/player-info?uid=${encodeURIComponent(uid)}&region=${encodeURIComponent(region)}`);
+    if (!res.ok) throw new Error(`Server error ${res.status}`);
+    const d = await res.json();
+    if (seq !== state.seq) return;
+    if (d.error) throw new Error(d.error);
+
+    const b = d.basicInfo || {};
+    const s = d.socialInfo || {};
+    const prof = d.profileInfo || {};
+    const cr = d.creditScoreInfo || {};
+    const dia = d.diamondCostRes || {};
+
+    set('pName', b.nickname || 'N/A');
+    set('pLvl', b.level);
+    $('pLikes').textContent = fmtInt(b.liked);
+    set('pRegion', regionName(region));
+    set('pSince', fmtDate(b.createAt));
+    set('pCredit', cr.creditScore ?? '—');
+    set('pDiamonds', dia.diamondCost !== undefined ? fmtInt(dia.diamondCost) : '—');
+
+    const bu = (d.mediaInfo && d.mediaInfo.bannerUrl) ||
+      `/api/banner/banner_${encodeURIComponent(uid)}.webp?region=${encodeURIComponent(region)}`;
+    const au = (d.mediaInfo && d.mediaInfo.avatarUrl) ||
+      `/api/avatar/avatar_${encodeURIComponent(uid)}.webp?region=${encodeURIComponent(region)}`;
+    state.bannerUrl = bu; state.avatarUrl = au; state.uid = uid;
+
+    $('pBanner').classList.remove('loaded');
+    $('pAvatar').classList.remove('loaded');
+    loadImg($('pBanner'), bu, seq);
+    loadImg($('pAvatar'), au, seq);
+
+    set('cUid', b.accountId || uid);
+    set('cName', b.nickname);
+    set('cRegion', regionName(region));
+    set('cGuild', (d.guildInfo && d.guildInfo.guildName) || '—');
+    set('cMode', cleanEnum(s.modePrefer));
+    set('cBio', s.signature || '—');
+
+    $('rBr').textContent = fmtInt(b.rankingPoints);
+    set('rBrRank', b.rank); set('rBrMax', b.maxRank);
+    $('rCs').textContent = fmtInt(b.csRankingPoints);
+    set('rCsRank', b.csRank); set('rCsMax', b.csMaxRank);
+    set('rSeason', b.seasonId); set('rVer', b.releaseVersion);
+    set('rCreated', fmtDateTime(b.createAt));
+    set('rLogin', fmtDateTime(b.lastLoginAt));
+    set('lAvatar', b.headPic); set('lBanner', b.bannerId);
+    set('lChar', prof.avatarId);
+    set('lAwake', prof.isSelectedAwaken ? 'Yes' : 'No');
+
+    $('rawBody').textContent = JSON.stringify(d, null, 2);
+    pushHistory(uid);
+    $('out').hidden = false;
+  } catch (e) {
+    if (seq === state.seq) {
+      showError(e.message || 'Could not fetch player data.');
+      $('empty').style.display = 'block';
+    }
+  } finally {
+    if (seq === state.seq) {
+      $('go').disabled = false; $('goTxt').textContent = 'Search';
+    }
+  }
+}
+
+function reset() {
+  state.seq++;
+  state.bannerUrl = state.avatarUrl = state.uid = null;
+  $('uid').value = '';
+  $('pBanner').removeAttribute('src'); $('pBanner').classList.remove('loaded');
+  $('pAvatar').removeAttribute('src'); $('pAvatar').classList.remove('loaded');
+  $('out').hidden = true; $('raw').hidden = true;
+  clearError(); $('empty').style.display = 'block';
+  $('uid').focus();
+}
+
+async function downloadMedia(kind) {
+  const url = kind === 'avatar' ? state.avatarUrl : state.bannerUrl;
+  if (!url) return;
+  const name = `${kind}_${state.uid || 'player'}.webp`;
+  try {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error('fetch failed');
+    const blob = await r.blob();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
+  } catch { window.open(url, '_blank'); }
+}
+
+function getHistory() { try { return JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); } catch { return []; } }
+function pushHistory(uid) {
+  const h = [uid, ...getHistory().filter(x => x !== uid)].slice(0, 8);
+  try { localStorage.setItem(HIST_KEY, JSON.stringify(h)); } catch {}
+  renderHistory();
+}
+function renderHistory() {
+  const h = getHistory(), box = $('hist'), chips = $('histChips');
+  chips.innerHTML = '';
+  if (!h.length) { box.hidden = true; return; }
+  box.hidden = false;
+  h.forEach(u => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.textContent = u;
+    b.addEventListener('click', () => { $('uid').value = u; search(u); });
+    chips.appendChild(b);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  $('frm').addEventListener('submit', e => { e.preventDefault(); search($('uid').value); });
+  $('again').addEventListener('click', reset);
+  $('dlBanner').addEventListener('click', () => downloadMedia('banner'));
+  $('dlAvatar').addEventListener('click', () => downloadMedia('avatar'));
+  $('rawToggle').addEventListener('click', () => {
+    const r = $('raw'); r.hidden = !r.hidden;
+    $('rawToggle').textContent = r.hidden ? 'Show raw JSON' : 'Hide raw JSON';
+  });
+  $('histClear').addEventListener('click', () => {
+    try { localStorage.removeItem(HIST_KEY); } catch {}
+    renderHistory();
+  });
+  $('rawCopy').addEventListener('click', async () => {
+    const txt = $('rawBody').textContent || '{}';
+    const label = $('rawCopyTxt');
+    try {
+      await navigator.clipboard.writeText(txt);
+      label.textContent = 'Copied!';
+    } catch { label.textContent = 'Error'; }
+    setTimeout(() => { label.textContent = 'Copy'; }, 2000);
+  });
+  renderHistory();
+});
+</script>
+</body>
+</html>
