@@ -8,7 +8,105 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="/static/style.css">
+<style>
+:root{
+  --ink:#0f2540; --mut:#5b728f; --line:rgba(255,255,255,.7);
+  --blue:#2563eb; --sky:#0ea5e9;
+  --glass:rgba(255,255,255,.62); --stroke:rgba(15,37,64,.09);
+  --sh:0 8px 32px rgba(15,37,64,.10); --r:20px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;color:var(--ink);min-height:100vh;background:#f6f9ff;padding:18px 14px 40px}
+.bg{position:fixed;inset:0;z-index:-1;overflow:hidden;background:linear-gradient(180deg,#fbfdff,#eef4ff)}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5}
+.b1{width:480px;height:480px;left:-140px;top:-140px;background:#bfdbfe}
+.b2{width:420px;height:420px;right:-120px;top:6%;background:#ddd6fe}
+.b3{width:520px;height:520px;left:30%;bottom:-260px;background:#bae6fd}
+
+.glass{background:var(--glass);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border:1px solid var(--line);outline:1px solid var(--stroke);border-radius:var(--r);box-shadow:var(--sh)}
+
+.nav{max-width:960px;margin:0 auto;padding:12px 18px;display:flex;justify-content:space-between;align-items:center}
+.logo{display:flex;align-items:center;gap:10px;font-family:'Outfit';font-weight:800;font-size:1.1rem}
+.logo-mark{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;color:#fff;font-weight:800;
+  background:linear-gradient(135deg,var(--blue),var(--sky));box-shadow:0 6px 14px rgba(37,99,235,.35)}
+.logo-name b{color:var(--blue)}
+.live{font-size:.78rem;font-weight:600;color:#047857;background:rgba(236,253,245,.8);
+  border:1px solid #a7f3d0;padding:6px 14px;border-radius:999px;display:flex;align-items:center;gap:8px}
+.pulse{width:8px;height:8px;border-radius:50%;background:#10b981;box-shadow:0 0 8px #10b981;animation:pl 2s infinite}
+@keyframes pl{50%{opacity:.35}}
+
+.wrap{max-width:960px;margin:0 auto}
+.hero{text-align:center;margin:34px 0 20px}
+.hero h1{font-family:'Outfit';font-size:clamp(1.8rem,5vw,2.6rem);font-weight:800;letter-spacing:-.5px}
+.hero p{color:var(--mut);margin-top:8px}
+
+.search{padding:20px;margin-bottom:16px}
+.row{display:flex;gap:10px}
+#uid{flex:1;border:2px solid transparent;background:rgba(255,255,255,.85);border-radius:14px;
+  padding:14px 16px;font-size:1rem;outline:none;color:var(--ink)}
+#uid:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(37,99,235,.12)}
+#go{border:none;cursor:pointer;color:#fff;font-weight:700;font-size:.95rem;padding:0 26px;border-radius:14px;
+  background:linear-gradient(135deg,var(--blue),var(--sky));box-shadow:0 8px 18px rgba(37,99,235,.35);
+  display:flex;align-items:center;gap:8px}
+#go:disabled{opacity:.6;cursor:wait}
+.hist{display:flex;gap:8px;align-items:center;margin-top:12px;font-size:.8rem;color:var(--mut);flex-wrap:wrap}
+.hist-chips{display:flex;gap:8px;flex-wrap:wrap}
+.hist-chips button{border:1px solid var(--stroke);background:rgba(255,255,255,.8);border-radius:999px;
+  padding:5px 14px;font-size:.78rem;font-weight:600;color:var(--blue);cursor:pointer}
+.hist-chips button:hover{background:#dbeafe}
+#histClear{border:none;background:transparent;color:var(--mut);cursor:pointer;font-size:.85rem;padding:5px 8px;border-radius:8px}
+#histClear:hover{color:#b91c1c}
+.dl-row{display:flex;gap:10px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+.dl-row button{border:2px solid var(--blue);background:#fff;color:var(--blue);border-radius:12px;
+  padding:9px 22px;font-weight:700;font-size:.82rem;cursor:pointer}
+.dl-row button:hover{background:var(--blue);color:#fff}
+.dl-row button i{margin-right:6px}
+
+.err{padding:14px 18px;color:#b91c1c;background:rgba(254,226,226,.75);font-size:.9rem;margin-bottom:16px}
+.empty{text-align:center;padding:56px 20px;color:var(--mut)}
+.empty-ico{width:72px;height:72px;margin:0 auto 14px;border-radius:22px;display:grid;place-items:center;
+  font-size:1.7rem;color:var(--blue);background:rgba(219,234,254,.7);border:1px solid #bfdbfe}
+.empty h2{color:var(--ink);font-family:'Outfit';margin-bottom:6px}
+
+.profile{padding:26px 22px;margin-bottom:16px;text-align:center}
+.p-top h2{font-family:'Outfit';font-size:1.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.pills{display:flex;gap:8px;justify-content:center;margin:12px 0;flex-wrap:wrap}
+.pill{background:rgba(255,255,255,.85);border:1px solid var(--stroke);border-radius:999px;
+  padding:6px 16px;font-size:.82rem;font-weight:600;color:var(--mut)}
+.pill b{color:var(--ink)} .pill i{color:#f43f5e;font-size:.75rem}
+.opened{display:inline-block;font-size:.8rem;font-weight:600;color:#fff;padding:7px 20px;border-radius:999px;
+  background:linear-gradient(135deg,var(--blue),var(--sky))}
+.banner{margin-top:18px;border-radius:14px;overflow:hidden;background:#0f2540;border:1px solid var(--stroke)}
+.banner img{width:100%;max-height:280px;object-fit:contain;display:block}
+.src{margin:12px auto 0;width:fit-content;font-size:.75rem;font-weight:700;color:var(--blue);
+  background:rgba(219,234,254,.7);border:1px solid #bfdbfe;padding:6px 16px;border-radius:999px}
+
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+@media(max-width:640px){.grid{grid-template-columns:1fr}.row{flex-direction:column}#go{padding:14px}}
+.card{padding:18px}
+.card.wide{grid-column:1/-1}
+.card h3{font-family:'Outfit';font-size:.92rem;color:var(--blue);margin-bottom:12px;
+  padding-bottom:10px;border-bottom:1px solid var(--stroke)}
+.card h3 i{margin-right:8px}
+.card dl>div{display:flex;justify-content:space-between;gap:10px;font-size:.82rem;padding:5px 0}
+.card dt{color:var(--mut)} .card dd{font-weight:600;text-align:right;word-break:break-word}
+.clip{max-width:170px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cols{display:grid;grid-template-columns:repeat(2,1fr);gap:0 18px}
+.leader{margin-top:10px;font-size:.8rem;color:var(--mut);border-top:1px dashed var(--stroke);padding-top:10px;line-height:1.6}
+.actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.actions button{flex:1;border-radius:12px;padding:11px;font-weight:700;font-size:.85rem;cursor:pointer;min-width:140px}
+#again{border:2px solid var(--blue);background:#fff;color:var(--blue)}
+#again:hover{background:var(--blue);color:#fff}
+#rawToggle{border:none;background:linear-gradient(135deg,var(--blue),var(--sky));color:#fff}
+#rawCopy{border:2px solid var(--blue);background:#fff;color:var(--blue)}
+#rawCopy:hover{background:var(--blue);color:#fff}
+#raw{margin-top:12px;background:#0b1e3a;color:#7dd3fc;border-radius:12px;padding:14px;
+  font-size:.75rem;max-height:380px;overflow:auto;white-space:pre-wrap;word-break:break-all}
+
+footer{text-align:center;color:var(--mut);font-size:.82rem;margin-top:22px}
+footer b{color:var(--blue)}
+</style>
 </head>
 <body>
 
@@ -16,7 +114,7 @@
 
 <nav class="glass nav">
   <div class="logo"><span class="logo-mark">L</span><span class="logo-name">Lokaya_<b>API</b></span></div>
-  <div class="live"><span class="pulse"></span>Online · <span id="obVer">{{ release_version }}</span></div>
+  <div class="live"><span class="pulse"></span>Online · <span id="obVer">—</span></div>
 </nav>
 
 <main class="wrap">
@@ -80,7 +178,7 @@
           <div><dt>Region</dt><dd id="cRegion">—</dd></div>
           <div><dt>Likes</dt><dd id="cLikes">—</dd></div>
           <div><dt>Gender</dt><dd id="cGender">—</dd></div>
-          <div><dt>Language</dt><dd id="cLang">—</dd></div>
+          <div><dt>Language</dt><dd id="cLanguage">—</dd></div>
           <div><dt>Mode</dt><dd id="cMode">—</dd></div>
           <div><dt>Bio</dt><dd id="cBio" class="clip">—</dd></div>
         </dl>
@@ -151,6 +249,230 @@
   <footer>Powered by <b>Lokaya_API</b></footer>
 
 </main>
-<script src="/static/app.js"></script>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const state = { mediaUrl: null, bannerUrl: null, avatarUrl: null, uid: null, seq: 0 };
+const HIST_KEY = 'lokaya_hist';
+
+const REGIONS = { BD:'Bangladesh', SG:'Singapore', VN:'Vietnam', IND:'India', BR:'Brazil',
+  US:'United States', NA:'North America', SAC:'South America', ID:'Indonesia', RU:'Russia',
+  TW:'Taiwan', TH:'Thailand', ME:'Middle East', PK:'Pakistan', CIS:'Commonwealth', EUROPE:'Europe', EU:'Europe' };
+
+const fmtInt = (v) => (v === undefined || v === null || v === '') ? '0' : Number(v).toLocaleString('en-US');
+const fmtDateTime = (ts) => {
+  if (!ts || ts === '0') return 'N/A';
+  const d = new Date(Number(ts) * 1000);
+  if (isNaN(d)) return ts;
+  return d.toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' }) +
+    ' at ' + d.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', hour12:true });
+};
+const fmtDate = (ts) => {
+  if (!ts || ts === '0') return 'N/A';
+  const d = new Date(Number(ts) * 1000);
+  return isNaN(d) ? ts : d.toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' });
+};
+const regionName = (c) => {
+  if (!c) return '—';
+  const n = REGIONS[String(c).toUpperCase()];
+  return n ? `${n} (${String(c).toUpperCase()})` : c;
+};
+const cleanEnum = (v) => (!v ? 'N/A' : String(v).replace(/^(Gender|Language|ModePrefer|RankShow)_/, '').replace(/_/g, ' '));
+const set = (id, v) => { const el = $(id); if (el) el.textContent = (v === undefined || v === null || v === '') ? 'N/A' : v; };
+
+function showError(msg) {
+  const e = $('err');
+  e.textContent = msg;
+  e.hidden = false;
+  $('out').hidden = true;
+  $('empty').style.display = 'block';
+}
+function clearError() { $('err').hidden = true; $('err').textContent = ''; }
+
+async function loadBanner(url, seq) {
+  const img = $('pBanner'), src = $('src');
+  src.textContent = 'Loading official media…';
+  try {
+    const r = await fetch(url, { headers: { Accept: 'image/webp' } });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    if (!(r.headers.get('content-type') || '').includes('image/webp')) throw new Error('not webp');
+    const blob = await r.blob();
+    if (seq !== state.seq) return;
+    if (state.mediaUrl) URL.revokeObjectURL(state.mediaUrl);
+    state.mediaUrl = URL.createObjectURL(blob);
+    img.src = state.mediaUrl;
+    const s = r.headers.get('x-free-fire-media-source') || '';
+    src.textContent = s === 'official-free-fire-cdn'
+      ? 'Official Free Fire CDN assets'
+      : 'Official asset with local fallback';
+  } catch {
+    if (seq !== state.seq) return;
+    src.textContent = 'Official asset unavailable · showing placeholder';
+  }
+}
+
+async function search(uid) {
+  uid = String(uid || '').trim();
+  if (!/^\d+$/.test(uid)) return showError('Please enter a numeric UID.');
+  const btn = $('go'), txt = $('goTxt');
+  btn.disabled = true; txt.textContent = 'Loading…';
+  clearError();
+  const seq = ++state.seq;
+  try {
+    const r = await fetch('/player-info?uid=' + encodeURIComponent(uid));
+    const d = await r.json();
+    if (!r.ok || d.error) throw new Error(d.error || 'Lookup failed.');
+    if (seq !== state.seq) return;
+
+    const b = d.basicInfo || {}, s = d.socialInfo || {}, cr = d.creditScoreInfo || {},
+          pet = d.petInfo || {}, clan = d.clanBasicInfo || {}, cap = d.captainBasicInfo || {},
+          prof = d.profileInfo || {}, dia = d.diamondCostRes || {};
+    const region = b.region || 'BD';
+
+    // Update version badge
+    if (b.releaseVersion) $('obVer').textContent = b.releaseVersion;
+
+    set('pName', b.nickname || 'N/A');
+    set('pLvl', b.level); $('pLikes').textContent = fmtInt(b.liked);
+    set('pRegion', regionName(region)); set('pSince', fmtDate(b.createAt));
+    set('pCredit', cr.creditScore);
+    set('pDiamonds', dia.diamondCost !== undefined ? fmtInt(dia.diamondCost) : 'N/A');
+
+    const bu = (d.mediaInfo && d.mediaInfo.bannerUrl) ||
+      `/api/banner/banner_${encodeURIComponent(uid)}.webp?region=${encodeURIComponent(region)}`;
+    const au = (d.mediaInfo && d.mediaInfo.avatarUrl) ||
+      `/api/avatar/avatar_${encodeURIComponent(uid)}.webp?region=${encodeURIComponent(region)}`;
+    state.bannerUrl = bu; state.avatarUrl = au; state.uid = uid;
+    loadBanner(bu, seq);
+
+    set('cUid', b.accountId || uid); set('cName', b.nickname);
+    set('cLvl', b.level); set('cExp', b.exp !== undefined ? fmtInt(b.exp) : 'N/A');
+    set('cRegion', regionName(region)); $('cLikes').textContent = fmtInt(b.liked);
+    set('cGender', cleanEnum(s.gender)); set('cLanguage', cleanEnum(s.language));
+    set('cMode', cleanEnum(s.modePrefer)); set('cBio', (s.signature || 'N/A'));
+
+    $('rBr').textContent = fmtInt(b.rankingPoints);
+    set('rBrRank', b.rank);
+    set('rBrMax', b.maxRank); $('rCs').textContent = fmtInt(b.csRankingPoints);
+    set('rCsRank', b.csRank); set('rCsMax', b.csMaxRank);
+    set('rSeason', b.seasonId); set('rVer', b.releaseVersion);
+    set('rCreated', fmtDateTime(b.createAt)); set('rLogin', fmtDateTime(b.lastLoginAt));
+
+    set('lAvatar', b.headPic); set('lBanner', b.bannerId);
+    set('lChar', prof.avatarId); set('lAwake', prof.isSelectedAwaken ? 'Yes' : 'No');
+    set('lClothes', Array.isArray(prof.clothes) ? prof.clothes.length + ' items' : 'N/A');
+    set('lSkills', Array.isArray(prof.equipedSkills) ? Math.floor(prof.equipedSkills.length / 4) + ' equipped' : 'N/A');
+    set('lBadges', b.badgeCnt); set('lTitle', b.title); set('lPin', b.pinId);
+
+    set('tId', pet.id); set('tLvl', pet.level);
+    set('tExp', pet.exp !== undefined ? fmtInt(pet.exp) : 'N/A');
+    set('tSel', pet.isSelected ? 'Yes' : 'No');
+    set('tSkill', pet.selectedSkillId); set('tSkin', pet.skinId);
+
+    set('gName', clan.clanName); set('gId', clan.clanId);
+    set('gLvl', clan.clanLevel);
+    set('gMem', clan.capacity ? `${clan.memberNum || 0}/${clan.capacity}` : 'N/A');
+    $('gLeader').textContent = (cap && cap.nickname)
+      ? `Leader: ${cap.nickname} · UID ${cap.accountId || 'N/A'} · Lv ${cap.level || 'N/A'} · ${fmtInt(cap.liked)} likes`
+      : 'No guild leader info';
+
+    $('rawBody').textContent = JSON.stringify(d, null, 2);
+    $('raw').hidden = true;
+    pushHistory(uid);
+
+    $('empty').style.display = 'none';
+    $('out').hidden = false;
+  } catch (e) {
+    if (seq !== state.seq) return;
+    showError(e.message);
+  } finally {
+    btn.disabled = false; txt.textContent = 'Search';
+  }
+}
+
+function reset() {
+  state.seq++;
+  if (state.mediaUrl) { URL.revokeObjectURL(state.mediaUrl); state.mediaUrl = null; }
+  state.bannerUrl = state.avatarUrl = state.uid = null;
+  $('uid').value = ''; $('pBanner').removeAttribute('src');
+  $('out').hidden = true; $('raw').hidden = true;
+  clearError(); $('empty').style.display = 'block';
+  $('uid').focus();
+}
+
+async function downloadMedia(kind) {
+  const url = kind === 'avatar' ? state.avatarUrl : (state.mediaUrl || state.bannerUrl);
+  if (!url) return;
+  const name = `${kind}_${state.uid || 'player'}.webp`;
+  try {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error('fetch failed');
+    const blob = await r.blob();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
+  } catch {
+    window.open(url, '_blank');
+  }
+}
+
+function getHistory() {
+  try { return JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); }
+  catch { return []; }
+}
+function pushHistory(uid) {
+  const h = [uid, ...getHistory().filter((x) => x !== uid)].slice(0, 8);
+  try { localStorage.setItem(HIST_KEY, JSON.stringify(h)); } catch {}
+  renderHistory();
+}
+function renderHistory() {
+  const h = getHistory(), box = $('hist'), chips = $('histChips');
+  chips.innerHTML = '';
+  if (!h.length) { box.hidden = true; return; }
+  box.hidden = false;
+  h.forEach((u) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.textContent = u;
+    b.addEventListener('click', () => { $('uid').value = u; search(u); });
+    chips.appendChild(b);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  $('frm').addEventListener('submit', (e) => { e.preventDefault(); search($('uid').value); });
+  $('again').addEventListener('click', reset);
+  $('dlBanner').addEventListener('click', () => downloadMedia('banner'));
+  $('dlAvatar').addEventListener('click', () => downloadMedia('avatar'));
+  $('rawToggle').addEventListener('click', () => { $('raw').hidden = !$('raw').hidden; });
+  $('histClear').addEventListener('click', () => {
+    try { localStorage.removeItem(HIST_KEY); } catch {}
+    renderHistory();
+  });
+  renderHistory();
+  $('rawCopy').addEventListener('click', async () => {
+    const txt = $('rawBody').textContent || '{}';
+    const label = $('rawCopyTxt');
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(txt);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = txt;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        ta.remove();
+      }
+      label.textContent = 'Copied!';
+    } catch {
+      label.textContent = 'Copy failed';
+    }
+    setTimeout(() => { label.textContent = 'Copy JSON'; }, 1500);
+  });
+});
+</script>
 </body>
 </html>
