@@ -14,7 +14,7 @@ body{
 }
 .wrap{max-width:850px;margin:0 auto;padding:0}
 
-/* ===== Panel de Saldo PayPal (Admin) ===== */
+/* ===== Panel de Admin (Saldo PayPal + Nombre) ===== */
 #pp-admin-panel{
   position:fixed;
   top:66px;
@@ -106,6 +106,72 @@ body{
   text-align:center;
   min-height:14px;
   color:#4ade80;
+  font-weight:600;
+}
+
+/* ===== SEPARADOR ENTRE PANELES ===== */
+.admin-divider{
+  height:1px;
+  background:rgba(37,99,196,.4);
+  margin:4px 0 2px;
+}
+
+/* ===== Panel de Nombre (Admin) ===== */
+#name-admin-section{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+#name-admin-section label{
+  font-size:11px;
+  color:rgba(255,255,255,.65);
+  font-weight:600;
+  letter-spacing:.2px;
+}
+.name-current-display{
+  font-size:12px;
+  color:#a78bfa;
+  font-weight:700;
+  margin-bottom:2px;
+  word-break:break-word;
+  line-height:1.3;
+}
+#name-admin-input{
+  width:100%;
+  height:34px;
+  padding:0 10px;
+  background:#1e2d47;
+  border:1px solid #7c3aed;
+  border-radius:5px;
+  color:#fff;
+  font-size:13px;
+  font-family:inherit;
+  outline:none;
+  transition:border-color .2s;
+}
+#name-admin-input:focus{border-color:#a78bfa}
+#name-admin-input::placeholder{color:rgba(255,255,255,.3)}
+#name-admin-save{
+  width:100%;
+  height:32px;
+  background:#7c3aed;
+  border:none;
+  border-radius:5px;
+  color:#fff;
+  font-size:12px;
+  font-weight:700;
+  cursor:pointer;
+  font-family:inherit;
+  transition:background .2s;
+  letter-spacing:.2px;
+}
+#name-admin-save:hover{background:#6d28d9}
+#name-admin-save:active{background:#5b21b6}
+#name-admin-msg{
+  font-size:11px;
+  text-align:center;
+  min-height:14px;
+  color:#a78bfa;
   font-weight:600;
 }
 
@@ -378,22 +444,38 @@ body.checkout-open{overflow:hidden}
 </head>
 <body>
 
-<!-- ===== PANEL ADMIN SALDO PAYPAL ===== -->
+<!-- ===== PANEL ADMIN (SALDO PAYPAL + NOMBRE) ===== -->
 <div id="pp-admin-panel">
   <button id="pp-admin-toggle" type="button" aria-expanded="true" aria-controls="pp-admin-body">
     <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M40 6C23.43 6 10 19.35 10 35.83c0 7.9 2.35 13.8 6.29 18.9 3.78 4.9 9.02 9 14.6 13.4l.19.15c1.85 1.46 3.76 2.96 5.72 4.56 1.86 1.52 4.54 1.52 6.4 0 2-1.64 3.94-3.18 5.84-4.67l.36-.28c11.08-8.75 20.6-16.26 20.6-32.06C70 19.35 56.57 6 40 6Z" fill="#60a5fa"/>
     </svg>
-    Saldo PayPal (Admin)
+    Panel Admin
     <span class="toggle-arrow open" id="pp-arrow">▲</span>
   </button>
   <div id="pp-admin-body">
-    <label for="pp-admin-input">Saldo actual:</label>
+
+    <!-- SALDO PAYPAL -->
+    <label>Saldo PayPal actual:</label>
     <div class="pp-balance-display" id="pp-balance-display">$0.00</div>
     <label for="pp-admin-input">Nuevo saldo (USD):</label>
     <input type="number" id="pp-admin-input" min="0" step="0.01" placeholder="Ej: 5000.00">
     <button id="pp-admin-save" type="button">💾 Guardar Saldo</button>
     <div id="pp-admin-msg"></div>
+
+    <!-- SEPARADOR -->
+    <div class="admin-divider"></div>
+
+    <!-- NOMBRE DEL JUGADOR -->
+    <div id="name-admin-section">
+      <label>Nombre de jugador actual:</label>
+      <div class="name-current-display" id="name-current-display">— sin nombre —</div>
+      <label for="name-admin-input">Nuevo nombre:</label>
+      <input type="text" id="name-admin-input" placeholder="Ej: NombreJugador123" maxlength="32" autocomplete="off">
+      <button id="name-admin-save" type="button">✏️ Guardar Nombre</button>
+      <div id="name-admin-msg"></div>
+    </div>
+
   </div>
 </div>
 
@@ -656,7 +738,6 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
 /* ===== Estado ===== */
 const DIAMOND = 'https://cdn-gop.garenanow.com/gop/app/0000/100/067/point.png';
 const GAME_ICON = 'https://cdn-gop.garenanow.com/gop/app/0000/100/067/icon.png';
-const API_BASE = 'https://freefire-idinfo.vercel.app';
 const PRICES = {100:0.99, 310:2.99, 520:4.99, 1060:9.99, 2180:19.99, 5600:49.99};
 const bonusOf = n => Math.round(n * 0.10);
 const fmtN = n => Number(n).toLocaleString('en-US');
@@ -680,23 +761,45 @@ function deductPPBalance(amount){
   return bal;
 }
 
-/* ===== PANEL ADMIN SALDO ===== */
-(function initAdminPanel(){
-  const toggleBtn  = document.getElementById('pp-admin-toggle');
-  const body       = document.getElementById('pp-admin-body');
-  const arrow      = document.getElementById('pp-arrow');
-  const input      = document.getElementById('pp-admin-input');
-  const saveBtn    = document.getElementById('pp-admin-save');
-  const display    = document.getElementById('pp-balance-display');
-  const msg        = document.getElementById('pp-admin-msg');
-  const panel      = document.getElementById('pp-admin-panel');
+/* ★ NOMBRE DEL JUGADOR (manual, sin API) ★ */
+const PLAYER_NAME_KEY = 'admin_player_name';
+function loadPlayerName(){
+  try { return localStorage.getItem(PLAYER_NAME_KEY) || ''; }
+  catch(e){ return ''; }
+}
+function savePlayerName(name){
+  try { localStorage.setItem(PLAYER_NAME_KEY, name); } catch(e){}
+}
 
-  // Estado inicial: panel visible al abrir la página
+/* ===== PANEL ADMIN (SALDO + NOMBRE) ===== */
+(function initAdminPanel(){
+  const toggleBtn     = document.getElementById('pp-admin-toggle');
+  const body          = document.getElementById('pp-admin-body');
+  const arrow         = document.getElementById('pp-arrow');
+  const panel         = document.getElementById('pp-admin-panel');
+
+  /* --- Saldo --- */
+  const balInput      = document.getElementById('pp-admin-input');
+  const balSave       = document.getElementById('pp-admin-save');
+  const balDisplay    = document.getElementById('pp-balance-display');
+  const balMsg        = document.getElementById('pp-admin-msg');
+
+  /* --- Nombre --- */
+  const nameInput     = document.getElementById('name-admin-input');
+  const nameSave      = document.getElementById('name-admin-save');
+  const nameDisplay   = document.getElementById('name-current-display');
+  const nameMsg       = document.getElementById('name-admin-msg');
+
   let panelOpen = true;
 
-  function updateDisplay(){
+  function updateBalDisplay(){
     const bal = loadPPBalance();
-    display.textContent = '$' + bal.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+    balDisplay.textContent = '$' + bal.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+
+  function updateNameDisplay(){
+    const n = loadPlayerName();
+    nameDisplay.textContent = n ? n : '— sin nombre —';
   }
 
   function setPanelOpen(open){
@@ -718,40 +821,54 @@ function deductPPBalance(amount){
     setPanelOpen(!panelOpen);
   });
 
-  saveBtn.addEventListener('click', function(){
-    const raw = input.value.trim();
+  /* Guardar saldo */
+  balSave.addEventListener('click', function(){
+    const raw = balInput.value.trim();
     if(raw === ''){
-      msg.style.color = '#f87171';
-      msg.textContent = '⚠ Ingresa un valor.';
-      setTimeout(()=>{ msg.textContent=''; }, 2500);
+      balMsg.style.color = '#f87171';
+      balMsg.textContent = '⚠ Ingresa un valor.';
+      setTimeout(()=>{ balMsg.textContent=''; }, 2500);
       return;
     }
     const val = parseFloat(raw);
     if(isNaN(val) || val < 0){
-      msg.style.color = '#f87171';
-      msg.textContent = '⚠ Valor inválido.';
-      setTimeout(()=>{ msg.textContent=''; }, 2500);
+      balMsg.style.color = '#f87171';
+      balMsg.textContent = '⚠ Valor inválido.';
+      setTimeout(()=>{ balMsg.textContent=''; }, 2500);
       return;
     }
     savePPBalance(val);
-    updateDisplay();
-    input.value = '';
-    msg.style.color = '#4ade80';
-    msg.textContent = '✓ Saldo actualizado!';
+    updateBalDisplay();
+    balInput.value = '';
+    balMsg.style.color = '#4ade80';
+    balMsg.textContent = '✓ Saldo actualizado!';
+    setTimeout(()=>{ balMsg.textContent=''; }, 2000);
+  });
+  balInput.addEventListener('keydown', function(e){ if(e.key==='Enter') balSave.click(); });
 
-    // ★ CAMBIO 1: Al guardar, ocultar el panel completo después de 800ms
+  /* Guardar nombre */
+  nameSave.addEventListener('click', function(){
+    const raw = nameInput.value.trim();
+    if(raw === ''){
+      nameMsg.style.color = '#f87171';
+      nameMsg.textContent = '⚠ Escribe un nombre.';
+      setTimeout(()=>{ nameMsg.textContent=''; }, 2500);
+      return;
+    }
+    savePlayerName(raw);
+    updateNameDisplay();
+    nameInput.value = '';
+    nameMsg.style.color = '#a78bfa';
+    nameMsg.textContent = '✓ Nombre guardado!';
     setTimeout(()=>{
-      msg.textContent = '';
+      nameMsg.textContent='';
       panel.hidden = true;
     }, 800);
   });
+  nameInput.addEventListener('keydown', function(e){ if(e.key==='Enter') nameSave.click(); });
 
-  // Guardar también con Enter
-  input.addEventListener('keydown', function(e){
-    if(e.key === 'Enter') saveBtn.click();
-  });
-
-  updateDisplay();
+  updateBalDisplay();
+  updateNameDisplay();
 })();
 
 const state = {
@@ -912,9 +1029,11 @@ methods.forEach(m=>{
 });
 
 /* ===================================================
-   LOGIN CON API — busca el nickname por UID
+   LOGIN — usa el nombre guardado por admin si existe,
+   si no, intenta la API; si falla, usa "Jugador + ID"
    =================================================== */
 const avatar = $('avatar'), avatarOriginal = avatar.innerHTML;
+const API_BASE = 'https://freefire-idinfo.vercel.app';
 
 async function login(){
   const id = $('playerId').value.trim();
@@ -934,17 +1053,27 @@ async function login(){
   loginBtn.style.transition = 'none';
 
   try {
-    const res = await fetch(`${API_BASE}/player-info?uid=${encodeURIComponent(id)}`);
-    const data = await res.json();
+    // Primero revisar si hay nombre guardado por el admin
+    const savedName = loadPlayerName();
+    let nickname = '';
 
-    // ★ CAMBIO 2: Cualquier error de la API o jugador no encontrado → mensaje simple
-    if (!res.ok || data.error || !data.basicInfo){
-      err.textContent = 'ID de jugador inválido.';
-      err.hidden = false;
-      return;
+    if(savedName){
+      // Usar el nombre del admin directamente, sin llamar a la API
+      nickname = savedName;
+    } else {
+      // Intentar la API
+      try {
+        const res = await fetch(`${API_BASE}/player-info?uid=${encodeURIComponent(id)}`);
+        const data = await res.json();
+        if(res.ok && !data.error && data.basicInfo){
+          nickname = (data.basicInfo.nickname || '').trim();
+        }
+      } catch(apiErr){
+        // API no disponible, continuar sin nombre
+      }
+      // Si la API no devolvió nombre, usar fallback
+      if(!nickname) nickname = 'Jugador' + id.slice(-4);
     }
-
-    const nickname = (data.basicInfo.nickname || '').trim() || ('Jugador' + id.slice(-3));
 
     state.logged = true;
     state.id = id;
@@ -958,10 +1087,6 @@ async function login(){
     $('eventModal').hidden = false;
     closeHistoryDropdown();
 
-  } catch(e){
-    // ★ CAMBIO 2: También en errores de red → mensaje simple
-    err.textContent = 'ID de jugador inválido.';
-    err.hidden = false;
   } finally {
     loginBtn.disabled = false;
     loginBtn.style.background = '';
