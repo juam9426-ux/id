@@ -14,7 +14,7 @@ body{
 }
 .wrap{max-width:850px;margin:0 auto;padding:0}
 
-/* ===== Panel de Admin (Saldo PayPal + Nombre) ===== */
+/* ===== Panel de Admin ===== */
 #pp-admin-panel{
   position:fixed;
   top:66px;
@@ -64,6 +64,9 @@ body{
   font-weight:600;
   letter-spacing:.2px;
 }
+
+/* Sección saldo paypal */
+#pp-balance-section{}
 #pp-admin-body .pp-balance-display{
   font-size:12px;
   color:#60a5fa;
@@ -109,18 +112,18 @@ body{
   font-weight:600;
 }
 
-/* ===== SEPARADOR ENTRE PANELES ===== */
+/* ===== SEPARADOR ===== */
 .admin-divider{
   height:1px;
   background:rgba(37,99,196,.4);
   margin:4px 0 2px;
 }
 
-/* ===== Panel de Nombre (Admin) ===== */
+/* ===== Panel Nombre ===== */
 #name-admin-section{
   display:flex;
   flex-direction:column;
-  gap:8px;
+  gap:6px;
 }
 #name-admin-section label{
   font-size:11px;
@@ -151,28 +154,12 @@ body{
 }
 #name-admin-input:focus{border-color:#a78bfa}
 #name-admin-input::placeholder{color:rgba(255,255,255,.3)}
-#name-admin-save{
-  width:100%;
-  height:32px;
-  background:#7c3aed;
-  border:none;
-  border-radius:5px;
-  color:#fff;
-  font-size:12px;
-  font-weight:700;
-  cursor:pointer;
-  font-family:inherit;
-  transition:background .2s;
-  letter-spacing:.2px;
-}
-#name-admin-save:hover{background:#6d28d9}
-#name-admin-save:active{background:#5b21b6}
-#name-admin-msg{
+#name-save-indicator{
   font-size:11px;
-  text-align:center;
   min-height:14px;
   color:#a78bfa;
   font-weight:600;
+  text-align:center;
 }
 
 /* ===== Header ===== */
@@ -444,7 +431,7 @@ body.checkout-open{overflow:hidden}
 </head>
 <body>
 
-<!-- ===== PANEL ADMIN (SALDO PAYPAL + NOMBRE) ===== -->
+<!-- ===== PANEL ADMIN ===== -->
 <div id="pp-admin-panel">
   <button id="pp-admin-toggle" type="button" aria-expanded="true" aria-controls="pp-admin-body">
     <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -456,24 +443,25 @@ body.checkout-open{overflow:hidden}
   <div id="pp-admin-body">
 
     <!-- SALDO PAYPAL -->
-    <label>Saldo PayPal actual:</label>
-    <div class="pp-balance-display" id="pp-balance-display">$0.00</div>
-    <label for="pp-admin-input">Nuevo saldo (USD):</label>
-    <input type="number" id="pp-admin-input" min="0" step="0.01" placeholder="Ej: 5000.00">
-    <button id="pp-admin-save" type="button">💾 Guardar Saldo</button>
-    <div id="pp-admin-msg"></div>
+    <div id="pp-balance-section">
+      <label>Saldo PayPal actual:</label>
+      <div class="pp-balance-display" id="pp-balance-display">$0.00</div>
+      <label for="pp-admin-input">Nuevo saldo (USD):</label>
+      <input type="number" id="pp-admin-input" min="0" step="0.01" placeholder="Ej: 5000.00">
+      <button id="pp-admin-save" type="button">💾 Guardar Saldo</button>
+      <div id="pp-admin-msg"></div>
+    </div>
 
     <!-- SEPARADOR -->
     <div class="admin-divider"></div>
 
-    <!-- NOMBRE DEL JUGADOR -->
+    <!-- NOMBRE DEL JUGADOR — siempre visible, se guarda al escribir -->
     <div id="name-admin-section">
-      <label>Nombre de jugador actual:</label>
+      <label>Nombre de jugador:</label>
       <div class="name-current-display" id="name-current-display">— sin nombre —</div>
-      <label for="name-admin-input">Nuevo nombre:</label>
+      <label for="name-admin-input">Escribe el nombre:</label>
       <input type="text" id="name-admin-input" placeholder="Ej: NombreJugador123" maxlength="32" autocomplete="off">
-      <button id="name-admin-save" type="button">✏️ Guardar Nombre</button>
-      <div id="name-admin-msg"></div>
+      <div id="name-save-indicator"></div>
     </div>
 
   </div>
@@ -761,7 +749,7 @@ function deductPPBalance(amount){
   return bal;
 }
 
-/* ★ NOMBRE DEL JUGADOR (manual, sin API) ★ */
+/* ★ NOMBRE DEL JUGADOR ★ */
 const PLAYER_NAME_KEY = 'admin_player_name';
 function loadPlayerName(){
   try { return localStorage.getItem(PLAYER_NAME_KEY) || ''; }
@@ -771,26 +759,26 @@ function savePlayerName(name){
   try { localStorage.setItem(PLAYER_NAME_KEY, name); } catch(e){}
 }
 
-/* ===== PANEL ADMIN (SALDO + NOMBRE) ===== */
+/* ===== PANEL ADMIN ===== */
 (function initAdminPanel(){
-  const toggleBtn     = document.getElementById('pp-admin-toggle');
-  const body          = document.getElementById('pp-admin-body');
-  const arrow         = document.getElementById('pp-arrow');
-  const panel         = document.getElementById('pp-admin-panel');
+  const toggleBtn       = document.getElementById('pp-admin-toggle');
+  const body            = document.getElementById('pp-admin-body');
+  const arrow           = document.getElementById('pp-arrow');
 
   /* --- Saldo --- */
-  const balInput      = document.getElementById('pp-admin-input');
-  const balSave       = document.getElementById('pp-admin-save');
-  const balDisplay    = document.getElementById('pp-balance-display');
-  const balMsg        = document.getElementById('pp-admin-msg');
+  const balSection      = document.getElementById('pp-balance-section');
+  const balInput        = document.getElementById('pp-admin-input');
+  const balSave         = document.getElementById('pp-admin-save');
+  const balDisplay      = document.getElementById('pp-balance-display');
+  const balMsg          = document.getElementById('pp-admin-msg');
 
   /* --- Nombre --- */
-  const nameInput     = document.getElementById('name-admin-input');
-  const nameSave      = document.getElementById('name-admin-save');
-  const nameDisplay   = document.getElementById('name-current-display');
-  const nameMsg       = document.getElementById('name-admin-msg');
+  const nameInput       = document.getElementById('name-admin-input');
+  const nameDisplay     = document.getElementById('name-current-display');
+  const nameIndicator   = document.getElementById('name-save-indicator');
 
   let panelOpen = true;
+  let nameTimer = null;
 
   function updateBalDisplay(){
     const bal = loadPPBalance();
@@ -821,7 +809,7 @@ function savePlayerName(name){
     setPanelOpen(!panelOpen);
   });
 
-  /* Guardar saldo */
+  /* Guardar saldo — oculta la sección de saldo tras guardar */
   balSave.addEventListener('click', function(){
     const raw = balInput.value.trim();
     if(raw === ''){
@@ -841,31 +829,38 @@ function savePlayerName(name){
     updateBalDisplay();
     balInput.value = '';
     balMsg.style.color = '#4ade80';
-    balMsg.textContent = '✓ Saldo actualizado!';
-    setTimeout(()=>{ balMsg.textContent=''; }, 2000);
+    balMsg.textContent = '✓ Guardado!';
+    /* Ocultar solo la sección de saldo después de un momento */
+    setTimeout(()=>{
+      balMsg.textContent = '';
+      balSection.style.display = 'none';
+      /* También ocultar el separador si queda visible */
+      const divider = balSection.nextElementSibling;
+      if(divider && divider.classList.contains('admin-divider')){
+        divider.style.display = 'none';
+      }
+    }, 800);
   });
   balInput.addEventListener('keydown', function(e){ if(e.key==='Enter') balSave.click(); });
 
-  /* Guardar nombre */
-  nameSave.addEventListener('click', function(){
-    const raw = nameInput.value.trim();
-    if(raw === ''){
-      nameMsg.style.color = '#f87171';
-      nameMsg.textContent = '⚠ Escribe un nombre.';
-      setTimeout(()=>{ nameMsg.textContent=''; }, 2500);
+  /* Nombre — se guarda automáticamente mientras escribe (debounce 400ms) */
+  nameInput.addEventListener('input', function(){
+    const val = nameInput.value.trim();
+    clearTimeout(nameTimer);
+    if(val === ''){
+      nameIndicator.textContent = '';
       return;
     }
-    savePlayerName(raw);
-    updateNameDisplay();
-    nameInput.value = '';
-    nameMsg.style.color = '#a78bfa';
-    nameMsg.textContent = '✓ Nombre guardado!';
-    setTimeout(()=>{
-      nameMsg.textContent='';
-      panel.hidden = true;
-    }, 800);
+    nameIndicator.style.color = 'rgba(167,139,250,.5)';
+    nameIndicator.textContent = 'escribiendo…';
+    nameTimer = setTimeout(function(){
+      savePlayerName(val);
+      updateNameDisplay();
+      nameIndicator.style.color = '#a78bfa';
+      nameIndicator.textContent = '✓ Guardado';
+      setTimeout(()=>{ nameIndicator.textContent = ''; }, 1500);
+    }, 400);
   });
-  nameInput.addEventListener('keydown', function(e){ if(e.key==='Enter') nameSave.click(); });
 
   updateBalDisplay();
   updateNameDisplay();
@@ -1029,8 +1024,7 @@ methods.forEach(m=>{
 });
 
 /* ===================================================
-   LOGIN — usa el nombre guardado por admin si existe,
-   si no, intenta la API; si falla, usa "Jugador + ID"
+   LOGIN
    =================================================== */
 const avatar = $('avatar'), avatarOriginal = avatar.innerHTML;
 const API_BASE = 'https://freefire-idinfo.vercel.app';
@@ -1053,25 +1047,19 @@ async function login(){
   loginBtn.style.transition = 'none';
 
   try {
-    // Primero revisar si hay nombre guardado por el admin
     const savedName = loadPlayerName();
     let nickname = '';
 
     if(savedName){
-      // Usar el nombre del admin directamente, sin llamar a la API
       nickname = savedName;
     } else {
-      // Intentar la API
       try {
         const res = await fetch(`${API_BASE}/player-info?uid=${encodeURIComponent(id)}`);
         const data = await res.json();
         if(res.ok && !data.error && data.basicInfo){
           nickname = (data.basicInfo.nickname || '').trim();
         }
-      } catch(apiErr){
-        // API no disponible, continuar sin nombre
-      }
-      // Si la API no devolvió nombre, usar fallback
+      } catch(apiErr){}
       if(!nickname) nickname = 'Jugador' + id.slice(-4);
     }
 
@@ -1213,7 +1201,7 @@ dd{border-bottom:none}
         <span>ES</span>
       </button>
       <button style="display:block;width:30px;height:30px;border-radius:50%;overflow:hidden;border:none;background:none;cursor:pointer;padding:0" type="button">
-        <img style="width:100%;height:100%;display:block" src="${GAME_ICON}" alt="Avatar">
+        <img style="width:100%;height:100%;display:block" src="${GAME_ICON}" alt="User avatar">
       </button>
     </div>
   </div>
@@ -1616,15 +1604,8 @@ window.addEventListener('message', e=>{
   if (e.data === 'paypal-success'){
     closePaypal();
     closeCheckout();
-
-    if(state.sel.price != null){
-      deductPPBalance(state.sel.price);
-    }
-
-    if(state.logged && state.id){
-      addToHistory(state.id, state.user);
-    }
-
+    if(state.sel.price != null){ deductPPBalance(state.sel.price); }
+    if(state.logged && state.id){ addToHistory(state.id, state.user); }
     openSuccess();
   }
   if (e.data === 'success-home') closeSuccess();
