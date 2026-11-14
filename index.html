@@ -3,26 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Free Fire Info — Buscar Jugador</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Free Fire — UID Lookup</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:       #080b10;
-  --bg2:      #0d1118;
-  --surface:  #131822;
-  --surface2: #1c2333;
-  --border:   #252e42;
-  --accent:   #e8c84a;
-  --accent2:  #f0a832;
-  --blue:     #3b8beb;
-  --safe:     #34d399;
-  --danger:   #f05252;
-  --text:     #dde3f0;
-  --muted:    #55637a;
-  --muted2:   #8899b0;
+  --bg:      #07090d;
+  --surf:    #101520;
+  --surf2:   #181f2e;
+  --border:  #222c40;
+  --gold:    #f5c518;
+  --gold2:   #f09020;
+  --blue:    #4a9eff;
+  --text:    #e2e8f4;
+  --muted:   #4e5f78;
+  --muted2:  #8898b4;
 }
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
 body {
   background: var(--bg);
@@ -32,676 +28,388 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 48px 16px 80px;
+  justify-content: flex-start;
+  padding: 56px 16px 80px;
 }
 
-/* ── Hero ── */
-.hero {
-  text-align: center;
-  margin-bottom: 40px;
-}
+/* ── Header ── */
+.header { text-align: center; margin-bottom: 48px; }
 
-.game-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(232,200,74,0.08);
-  border: 1px solid rgba(232,200,74,0.2);
-  border-radius: 20px;
-  padding: 5px 14px 5px 10px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--accent);
-  letter-spacing: 0.4px;
-  margin-bottom: 16px;
+.ff-logo {
+  font-size: 52px;
+  line-height: 1;
+  margin-bottom: 14px;
+  display: block;
+  filter: drop-shadow(0 0 24px rgba(245,197,24,0.5));
+  animation: pulse 2.4s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,100%{ filter: drop-shadow(0 0 18px rgba(245,197,24,0.4)); }
+  50%    { filter: drop-shadow(0 0 32px rgba(245,197,24,0.75)); }
 }
 
 h1 {
   font-family: 'Barlow Condensed', sans-serif;
-  font-size: clamp(36px, 7vw, 60px);
+  font-size: clamp(38px, 8vw, 64px);
   font-weight: 800;
+  letter-spacing: 1px;
   line-height: 1;
   color: var(--text);
-  letter-spacing: 0.5px;
 }
-
-h1 span {
-  color: var(--accent);
+h1 em {
+  font-style: normal;
+  background: linear-gradient(90deg, var(--gold), var(--gold2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
-
-.hero-sub {
+.sub {
   margin-top: 10px;
   color: var(--muted2);
-  font-size: 15px;
+  font-size: 14px;
 }
 
-/* ── Search panel ── */
-.search-panel {
+/* ── Card container ── */
+.card {
   width: 100%;
-  max-width: 560px;
-  background: var(--surface);
+  max-width: 420px;
+  background: var(--surf);
   border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 24px;
-  margin-bottom: 28px;
+  border-radius: 20px;
+  overflow: hidden;
 }
 
-.field-label {
-  font-size: 12px;
+/* search section */
+.search-sec {
+  padding: 24px 24px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+label {
+  display: block;
+  font-size: 11px;
   font-weight: 600;
   color: var(--muted2);
-  margin-bottom: 6px;
-  display: block;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.5px;
+  margin-bottom: 7px;
 }
 
-.row-fields {
+.input-row {
   display: flex;
   gap: 10px;
-  margin-bottom: 14px;
 }
 
-.field-uid { flex: 2; }
-.field-region { flex: 1; }
-
-input[type="text"],
-select {
-  width: 100%;
-  background: var(--bg2);
+input[type="text"] {
+  flex: 1;
+  background: var(--surf2);
   border: 1.5px solid var(--border);
   color: var(--text);
   font-family: 'Barlow', sans-serif;
-  font-size: 15px;
-  padding: 11px 14px;
+  font-size: 16px;
+  padding: 12px 14px;
   border-radius: 10px;
   outline: none;
   transition: border-color 0.2s;
-  appearance: none;
 }
+input::placeholder { color: var(--muted); }
+input:focus { border-color: var(--gold); }
 
-select { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2355637a' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
-
-input[type="text"]::placeholder { color: var(--muted); }
-input[type="text"]:focus,
-select:focus { border-color: var(--accent); }
-
-.key-row {
-  display: flex;
-  gap: 10px;
-  align-items: flex-end;
-}
-
-.key-row .field-uid { flex: 1; }
-
-button.search-btn {
-  background: var(--accent);
-  color: #000;
+button {
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  color: #0a0c10;
   font-family: 'Barlow Condensed', sans-serif;
-  font-size: 17px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 800;
   letter-spacing: 0.5px;
   border: none;
   border-radius: 10px;
-  padding: 11px 26px;
+  padding: 12px 20px;
   cursor: pointer;
-  transition: opacity 0.2s, transform 0.1s;
+  transition: opacity 0.18s, transform 0.1s;
   white-space: nowrap;
-  height: 44px;
 }
+button:hover   { opacity: 0.86; }
+button:active  { transform: scale(0.96); }
+button:disabled{ opacity: 0.35; cursor: not-allowed; transform: none; }
 
-button.search-btn:hover  { opacity: 0.88; }
-button.search-btn:active { transform: scale(0.97); }
-button.search-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+/* result section */
+.result-sec { padding: 22px 24px; min-height: 60px; }
 
-/* ── Result area ── */
-.result-wrap {
-  width: 100%;
-  max-width: 560px;
-}
-
-/* ── Player card ── */
-.player-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  overflow: hidden;
-  animation: fadeUp 0.3s ease;
-}
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* top accent bar */
-.card-top-bar {
-  height: 4px;
-  background: linear-gradient(90deg, var(--accent), var(--accent2), #f06b32);
-}
-
-/* header section */
-.card-head {
-  padding: 20px 22px 16px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.player-name-block { flex: 1; min-width: 0; }
-
-.player-name {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 28px;
-  font-weight: 800;
-  color: var(--text);
-  line-height: 1.1;
-  word-break: break-word;
-}
-
-.player-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 8px;
-}
-
-.tag {
-  font-size: 11px;
-  font-weight: 600;
-  padding: 3px 10px;
-  border-radius: 20px;
-  letter-spacing: 0.3px;
-}
-
-.tag-region {
-  background: rgba(59,139,235,0.12);
-  border: 1px solid rgba(59,139,235,0.25);
-  color: var(--blue);
-}
-
-.tag-level {
-  background: rgba(232,200,74,0.1);
-  border: 1px solid rgba(232,200,74,0.22);
-  color: var(--accent);
-}
-
-.tag-season {
-  background: rgba(136,153,176,0.1);
-  border: 1px solid rgba(136,153,176,0.2);
-  color: var(--muted2);
-}
-
-.likes-block {
-  text-align: right;
-  flex-shrink: 0;
-}
-
-.likes-num {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 26px;
-  font-weight: 800;
-  color: var(--accent);
-  line-height: 1;
-}
-
-.likes-label {
-  font-size: 11px;
-  color: var(--muted);
-  margin-top: 2px;
-}
-
-/* stats grid */
-.card-section { padding: 18px 22px; border-bottom: 1px solid var(--border); }
-.card-section:last-child { border-bottom: none; }
-
-.section-title {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--muted);
-  letter-spacing: 0.8px;
-  margin-bottom: 14px;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-}
-
-.stat-box {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 12px 10px;
+/* empty state */
+.empty {
   text-align: center;
+  padding: 12px 0 4px;
+  color: var(--muted);
+  font-size: 14px;
 }
 
-.stat-val {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--text);
-  line-height: 1;
+/* player result */
+.player {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: fadeUp 0.28s ease;
+}
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(10px); }
+  to   { opacity:1; transform:translateY(0); }
 }
 
-.stat-lbl {
-  font-size: 11px;
-  color: var(--muted2);
-  margin-top: 4px;
-}
-
-/* rank section */
-.rank-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+.player-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 10px;
 }
 
-.rank-box {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 14px;
-}
-
-.rank-mode {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--muted2);
-  margin-bottom: 6px;
-}
-
-.rank-points {
+.nickname {
   font-family: 'Barlow Condensed', sans-serif;
-  font-size: 24px;
+  font-size: 32px;
   font-weight: 800;
   color: var(--text);
+  word-break: break-word;
+  line-height: 1.1;
 }
 
-.rank-max {
-  font-size: 11px;
-  color: var(--muted);
-  margin-top: 2px;
-}
-
-.rank-tier {
-  display: inline-block;
-  margin-top: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 2px 9px;
-  border-radius: 20px;
-}
-
-/* guild */
-.guild-row {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.guild-icon {
-  width: 44px;
-  height: 44px;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
+.region-badge {
   flex-shrink: 0;
-}
-
-.guild-info { flex: 1; }
-.guild-name {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--text);
-}
-
-.guild-level {
+  background: rgba(74,158,255,0.1);
+  border: 1px solid rgba(74,158,255,0.25);
+  color: var(--blue);
   font-size: 12px;
-  color: var(--muted2);
-  margin-top: 2px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  letter-spacing: 0.4px;
 }
 
-/* dates row */
-.dates-grid {
+.info-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
 }
 
-.date-box {
-  background: var(--surface2);
+.info-box {
+  background: var(--surf2);
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 12px 14px;
 }
-
-.date-lbl { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
-.date-val { font-size: 14px; font-weight: 600; color: var(--text); }
-
-/* spinner / messages */
-.msg-center {
-  text-align: center;
-  padding: 20px;
-  font-size: 14px;
-  color: var(--muted2);
+.info-lbl { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+.info-val {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+  word-break: break-all;
 }
 
+/* loading / error */
+.loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  padding: 10px 0;
+  color: var(--muted2);
+  font-size: 14px;
+}
 .spinner {
-  display: inline-block;
-  width: 16px; height: 16px;
+  width: 18px; height: 18px;
   border: 2.5px solid rgba(255,255,255,0.08);
-  border-top-color: var(--accent);
+  border-top-color: var(--gold);
   border-radius: 50%;
   animation: spin 0.65s linear infinite;
-  vertical-align: middle;
-  margin-right: 8px;
+  flex-shrink: 0;
 }
+@keyframes spin { to { transform:rotate(360deg); } }
 
-@keyframes spin { to { transform: rotate(360deg); } }
-
-.error-box {
-  background: rgba(240,82,82,0.07);
-  border: 1px solid rgba(240,82,82,0.2);
-  border-radius: 12px;
-  padding: 16px 20px;
-  color: var(--danger);
-  font-size: 14px;
+.error {
+  background: rgba(255,70,70,0.07);
+  border: 1px solid rgba(255,70,70,0.2);
+  border-radius: 10px;
+  color: #f07070;
+  font-size: 13px;
+  padding: 12px 16px;
   text-align: center;
-  animation: fadeUp 0.2s ease;
 }
 
-.usage-bar-wrap {
-  margin-top: 20px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 14px 18px;
+/* footer note */
+.powered {
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+}
+.powered a { color: var(--muted); text-decoration: underline; }
+
+/* history strip */
+.history-sec {
+  padding: 0 24px 20px;
   display: none;
 }
-
-.usage-label {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  color: var(--muted2);
+.history-title {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 600;
+  letter-spacing: 0.5px;
   margin-bottom: 8px;
 }
-
-.usage-track {
-  height: 5px;
-  background: var(--surface2);
-  border-radius: 10px;
-  overflow: hidden;
+.history-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
-
-.usage-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--accent), var(--accent2));
-  border-radius: 10px;
-  transition: width 0.6s ease;
+.chip {
+  background: var(--surf2);
+  border: 1px solid var(--border);
+  color: var(--muted2);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 11px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
 }
+.chip:hover { border-color: var(--gold); color: var(--gold); }
 
-@media (max-width: 440px) {
-  .stats-grid { grid-template-columns: repeat(2, 1fr); }
-  .row-fields  { flex-direction: column; }
-  .key-row     { flex-direction: column; }
-  button.search-btn { width: 100%; height: auto; padding: 13px; }
-  .card-head   { flex-direction: column; }
-  .likes-block { text-align: left; }
+@media(max-width:380px){
+  .info-row { grid-template-columns: 1fr; }
+  .player-name-row { flex-direction: column; align-items: flex-start; }
 }
 </style>
 </head>
 <body>
 
-<div class="hero">
-  <div class="game-badge">🔥 Free Fire Info API</div>
-  <h1>Buscar <span>Jugador</span></h1>
-  <p class="hero-sub">Estadísticas, rango, guild y más con un solo UID</p>
+<div class="header">
+  <span class="ff-logo">🔥</span>
+  <h1>Free Fire<br><em>UID Lookup</em></h1>
+  <p class="sub">Busca cualquier jugador por su UID</p>
 </div>
 
-<div class="search-panel">
-  <div class="row-fields">
-    <div class="field-uid">
-      <label class="field-label" for="uidInput">UID del jugador</label>
-      <input type="text" id="uidInput" placeholder="Ej: 2312730961" inputmode="numeric" autocomplete="off" />
-    </div>
-    <div class="field-region">
-      <label class="field-label" for="regionSelect">Región</label>
-      <select id="regionSelect">
-        <option value="">Auto</option>
-        <option value="BD">BD — Bangladesh</option>
-        <option value="IND">IND — India</option>
-        <option value="ID">ID — Indonesia</option>
-        <option value="SG">SG — Singapur</option>
-        <option value="TH">TH — Tailandia</option>
-        <option value="PK">PK — Pakistán</option>
-        <option value="BR">BR — Brasil</option>
-        <option value="US">US — EE.UU.</option>
-        <option value="NA">NA — Norteamérica</option>
-        <option value="SAC">SAC — Sudamérica</option>
-      </select>
+<div class="card">
+  <div class="search-sec">
+    <label for="uidIn">UID del jugador</label>
+    <div class="input-row">
+      <input type="text" id="uidIn" placeholder="Ej: 6605263063" inputmode="numeric" autocomplete="off" />
+      <button id="btn" onclick="lookup()">Buscar</button>
     </div>
   </div>
 
-  <div class="key-row">
-    <div class="field-uid">
-      <label class="field-label" for="apiKey">API Key</label>
-      <input type="text" id="apiKey" placeholder="Tu x-api-key de gameskinbo.com" autocomplete="off" />
-    </div>
-    <button class="search-btn" id="searchBtn" onclick="buscar()">Buscar</button>
+  <div class="result-sec" id="resultSec">
+    <p class="empty">Ingresa un UID para ver el perfil</p>
+  </div>
+
+  <div class="history-sec" id="historySec">
+    <div class="history-title">Búsquedas recientes</div>
+    <div class="history-chips" id="historyChips"></div>
   </div>
 </div>
 
-<div class="result-wrap" id="resultWrap"></div>
+<p class="powered" style="margin-top:16px">
+  Powered by <a href="https://www.npmjs.com/package/free-fire-apis" target="_blank" rel="noopener">free-fire-apis</a> · MIT License
+</p>
 
-<div class="usage-bar-wrap" id="usageBar">
-  <div class="usage-label">
-    <span>Uso de API</span>
-    <span id="usageText">— / —</span>
-  </div>
-  <div class="usage-track">
-    <div class="usage-fill" id="usageFill" style="width:0%"></div>
-  </div>
-</div>
+<!-- Library from jsDelivr -->
+<script src="https://cdn.jsdelivr.net/npm/free-fire-apis@0.0.1/index.min.js"></script>
 
 <script>
-const BASE = 'https://api.gameskinbo.com';
+const uidIn   = document.getElementById('uidIn');
+const btn     = document.getElementById('btn');
+const resSec  = document.getElementById('resultSec');
+const hisSec  = document.getElementById('historySec');
+const hisChips= document.getElementById('historyChips');
 
-const $ = id => document.getElementById(id);
+let history = JSON.parse(localStorage.getItem('ff_history') || '[]');
 
-$('uidInput').addEventListener('keydown', e => { if (e.key === 'Enter') buscar(); });
+uidIn.addEventListener('keydown', e => { if (e.key === 'Enter') lookup(); });
+
+renderHistory();
 
 function setLoading(on) {
-  $('searchBtn').disabled = on;
-  $('searchBtn').innerHTML = on
-    ? '<span class="spinner"></span>Buscando…'
+  btn.disabled = on;
+  btn.innerHTML = on
+    ? '<span class="spinner"></span>'
     : 'Buscar';
 }
 
-function fmt(n) {
-  if (n == null || n === 0) return '0';
-  if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M';
-  if (n >= 1_000)     return (n / 1_000).toFixed(1) + 'K';
-  return n.toLocaleString();
+function renderHistory() {
+  if (!history.length) return;
+  hisSec.style.display = 'block';
+  hisChips.innerHTML = history.slice(-6).reverse().map(h =>
+    `<span class="chip" onclick="loadHistory('${h}')">${h}</span>`
+  ).join('');
 }
 
-function ts(unix) {
-  if (!unix) return '—';
-  return new Date(Number(unix) * 1000).toLocaleDateString('es-ES', {
-    year: 'numeric', month: 'short', day: 'numeric'
-  });
+function loadHistory(uid) {
+  uidIn.value = uid;
+  lookup();
 }
 
-function rankTier(pts) {
-  if (pts >= 6000) return ['Heroico',  '#e8c84a', 'rgba(232,200,74,0.12)'];
-  if (pts >= 5000) return ['Platino',  '#8bd4f5', 'rgba(139,212,245,0.12)'];
-  if (pts >= 4000) return ['Oro',      '#f0a832', 'rgba(240,168,50,0.12)'];
-  if (pts >= 3000) return ['Plata',    '#c0c8d8', 'rgba(192,200,216,0.12)'];
-  if (pts >= 2000) return ['Bronce',   '#cd7f32', 'rgba(205,127,50,0.12)'];
-  return                  ['Hierro',   '#8899b0', 'rgba(136,153,176,0.1)'];
+function saveHistory(uid) {
+  history = [...new Set([...history, uid])].slice(-10);
+  localStorage.setItem('ff_history', JSON.stringify(history));
+  renderHistory();
 }
 
-function showError(msg) {
-  $('resultWrap').innerHTML = `<div class="error-box">⚠️ ${msg}</div>`;
-}
-
-async function fetchAPI(path, key) {
-  const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(BASE + path)}`;
-  const res = await fetch(url, {
-    headers: { 'x-api-key': key }
-  });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.json();
-}
-
-async function buscar() {
-  const uid    = $('uidInput').value.trim();
-  const region = $('regionSelect').value;
-  const key    = $('apiKey').value.trim();
-
-  if (!uid)  { showError('Ingresa un UID de jugador.'); return; }
-  if (!key)  { showError('Ingresa tu API Key de gameskinbo.com.'); return; }
-  if (!/^\d+$/.test(uid)) { showError('El UID solo debe contener números.'); return; }
+async function lookup() {
+  const rawUid = uidIn.value.trim();
+  if (!rawUid) return;
+  if (!/^\d+$/.test(rawUid)) {
+    resSec.innerHTML = `<div class="error">⚠️ El UID solo debe contener números.</div>`;
+    return;
+  }
 
   setLoading(true);
-  $('resultWrap').innerHTML = `<p class="msg-center"><span class="spinner"></span>Consultando perfil…</p>`;
-  $('usageBar').style.display = 'none';
+  resSec.innerHTML = `
+    <div class="loading">
+      <div class="spinner"></div>
+      Buscando jugador…
+    </div>`;
 
   try {
-    // Build endpoint
-    let endpoint = `/ff-info/get?uid=${uid}`;
-    if (region) endpoint += `&region=${region}`;
+    // The library exposes a global `uid` function
+    if (typeof uid === 'undefined') throw new Error('lib_not_loaded');
 
-    const data = await fetchAPI(endpoint, key);
+    const data = await uid(rawUid);
 
-    if (data.error) {
-      showError(data.error);
+    if (!data || (!data.Nickname && !data.nickname)) {
+      resSec.innerHTML = `<div class="error">No se encontró ningún jugador con ese UID.</div>`;
       setLoading(false);
       return;
     }
 
-    const A  = data.AccountInfo          || {};
-    const P  = data.AccountProfileInfo   || {};
-    const G  = data.GuildInfo            || null;
-    const CS = data.captainBasicInfo     || null;
+    const name   = data.Nickname   || data.nickname   || '—';
+    const region = data.Region     || data.region     || '—';
+    const uidOut = data.Uid        || data.uid        || rawUid;
+    const author = data.Author     || data.author     || '—';
 
-    const brPoints  = P.BrRankPoint  || 0;
-    const csPoints  = P.CsRankPoint  || 0;
-    const brMax     = P.BrMaxRank    || 0;
-    const csMax     = P.CsMaxRank    || 0;
+    saveHistory(rawUid);
 
-    const [brTier,  brColor,  brBg]  = rankTier(brPoints);
-    const [csTier,  csColor,  csBg]  = rankTier(csPoints);
-
-    // Guild block
-    let guildHTML = '';
-    if (G && G.GuildName) {
-      guildHTML = `
-        <div class="card-section">
-          <div class="section-title">Guild</div>
-          <div class="guild-row">
-            <div class="guild-icon">🛡️</div>
-            <div class="guild-info">
-              <div class="guild-name">${G.GuildName}</div>
-              <div class="guild-level">Nivel ${G.GuildLevel ?? '—'} · ${G.GuildMember ?? '—'} miembros</div>
-            </div>
-          </div>
-        </div>`;
-    }
-
-    $('resultWrap').innerHTML = `
-      <div class="player-card">
-        <div class="card-top-bar"></div>
-
-        <div class="card-head">
-          <div class="player-name-block">
-            <div class="player-name">${A.AccountName || 'Jugador'}</div>
-            <div class="player-meta">
-              <span class="tag tag-region">${A.AccountRegion || region || '?'}</span>
-              <span class="tag tag-level">Nivel ${A.AccountLevel ?? '—'}</span>
-              <span class="tag tag-season">Temporada ${A.AccountSeasonId ?? '—'}</span>
-            </div>
-          </div>
-          <div class="likes-block">
-            <div class="likes-num">${fmt(A.AccountLikes)}</div>
-            <div class="likes-label">❤️ likes</div>
-          </div>
+    resSec.innerHTML = `
+      <div class="player">
+        <div class="player-name-row">
+          <div class="nickname">${name}</div>
+          <span class="region-badge">${region}</span>
         </div>
-
-        <div class="card-section">
-          <div class="section-title">Estadísticas generales</div>
-          <div class="stats-grid">
-            <div class="stat-box">
-              <div class="stat-val">${A.AccountLevel ?? '—'}</div>
-              <div class="stat-lbl">Nivel</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-val">${fmt(A.AccountEXP)}</div>
-              <div class="stat-lbl">EXP total</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-val">${fmt(A.AccountLikes)}</div>
-              <div class="stat-lbl">Likes</div>
-            </div>
+        <div class="info-row">
+          <div class="info-box">
+            <div class="info-lbl">UID</div>
+            <div class="info-val">${uidOut}</div>
           </div>
-        </div>
-
-        <div class="card-section">
-          <div class="section-title">Rango competitivo</div>
-          <div class="rank-row">
-            <div class="rank-box">
-              <div class="rank-mode">Battle Royale</div>
-              <div class="rank-points">${brPoints.toLocaleString()}</div>
-              <div class="rank-max">Máx: ${brMax.toLocaleString()}</div>
-              <span class="rank-tier" style="color:${brColor};background:${brBg};border:1px solid ${brColor}44">${brTier}</span>
-            </div>
-            <div class="rank-box">
-              <div class="rank-mode">Clash Squad</div>
-              <div class="rank-points">${csPoints.toLocaleString()}</div>
-              <div class="rank-max">Máx: ${csMax.toLocaleString()}</div>
-              <span class="rank-tier" style="color:${csColor};background:${csBg};border:1px solid ${csColor}44">${csTier}</span>
-            </div>
-          </div>
-        </div>
-
-        ${guildHTML}
-
-        <div class="card-section">
-          <div class="section-title">Actividad</div>
-          <div class="dates-grid">
-            <div class="date-box">
-              <div class="date-lbl">Último acceso</div>
-              <div class="date-val">${ts(A.AccountLastLogin)}</div>
-            </div>
-            <div class="date-box">
-              <div class="date-lbl">Cuenta creada</div>
-              <div class="date-val">${ts(A.AccountCreateTime)}</div>
-            </div>
+          <div class="info-box">
+            <div class="info-lbl">Región</div>
+            <div class="info-val">${region}</div>
           </div>
         </div>
       </div>`;
 
-    // Fetch usage
-    try {
-      const usage = await fetchAPI('/api/usage', key);
-      if (usage.limit) {
-        const pct = Math.min(100, (usage.used / usage.limit) * 100);
-        $('usageText').textContent = `${usage.used} / ${usage.limit} · Plan ${usage.plan}`;
-        $('usageFill').style.width  = pct + '%';
-        $('usageBar').style.display = 'block';
-      }
-    } catch (_) {}
-
   } catch (err) {
-    showError('No se pudo conectar con la API. Revisa tu key o intenta de nuevo.');
+    if (err.message === 'lib_not_loaded') {
+      resSec.innerHTML = `<div class="error">La librería no cargó. Revisa tu conexión e intenta de nuevo.</div>`;
+    } else {
+      resSec.innerHTML = `<div class="error">UID inválido o error de red. Verifica el UID e intenta de nuevo.</div>`;
+    }
     console.error(err);
   }
 
