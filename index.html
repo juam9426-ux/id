@@ -2,25 +2,23 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Buscar Jugador — Roblox</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Free Fire — Buscar Jugador</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0d0f14;
-    --surface: #161920;
-    --surface2: #1e2130;
-    --border: #2a2f45;
-    --accent: #00b4ff;
-    --accent2: #7c3aed;
-    --text: #e8eaf0;
-    --muted: #6b7280;
-    --success: #22d3a0;
-    --error: #f87171;
-    --card-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    --bg:       #080C10;
+    --surface:  #0D1318;
+    --border:   #1A2530;
+    --accent:   #00E5FF;
+    --accent2:  #FF6B00;
+    --text:     #E8EDF2;
+    --muted:    #5A6A78;
+    --success:  #00D084;
+    --danger:   #FF4444;
+    --radius:   4px;
   }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
     background: var(--bg);
@@ -30,545 +28,381 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 48px 16px 80px;
+    padding: 0 16px 24px;
   }
 
   header {
+    width: 100%;
+    max-width: 640px;
+    padding: 48px 0 32px;
     text-align: center;
-    margin-bottom: 48px;
   }
-
-  .logo-mark {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 16px;
+  .logo-label {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 10px;
   }
-
-  .logo-icon {
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-  }
-
   h1 {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: clamp(28px, 5vw, 44px);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: clamp(28px, 6vw, 42px);
     font-weight: 700;
-    letter-spacing: -0.5px;
+    line-height: 1.1;
     color: var(--text);
   }
+  h1 span { color: var(--accent); }
 
-  .subtitle {
-    color: var(--muted);
-    font-size: 15px;
-    margin-top: 6px;
-  }
-
-  .search-box {
+  .search-wrap {
     width: 100%;
-    max-width: 540px;
+    max-width: 640px;
     margin-bottom: 32px;
   }
-
-  .search-row {
+  .region-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .region-btn {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    padding: 8px 0;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: border-color .15s, color .15s, background .15s;
+  }
+  .region-btn.active,
+  .region-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(0,229,255,.06);
+  }
+  .input-row {
     display: flex;
     gap: 10px;
   }
-
   input[type="text"] {
     flex: 1;
     background: var(--surface);
-    border: 1.5px solid var(--border);
+    border: 1px solid var(--border);
     color: var(--text);
-    font-family: 'Inter', sans-serif;
-    font-size: 15px;
-    padding: 12px 16px;
-    border-radius: 10px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    padding: 14px 16px;
+    border-radius: var(--radius);
     outline: none;
-    transition: border-color 0.2s;
+    transition: border-color .15s;
   }
-
   input[type="text"]::placeholder { color: var(--muted); }
   input[type="text"]:focus { border-color: var(--accent); }
-
-  button {
+  button.search-btn {
     background: var(--accent);
     color: #000;
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 14px;
-    font-weight: 700;
     border: none;
-    border-radius: 10px;
-    padding: 12px 22px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 14px 24px;
+    border-radius: var(--radius);
     cursor: pointer;
-    transition: opacity 0.2s, transform 0.1s;
+    transition: opacity .15s;
     white-space: nowrap;
   }
+  button.search-btn:hover { opacity: .85; }
+  button.search-btn:disabled { opacity: .4; cursor: not-allowed; }
 
-  button:hover { opacity: 0.88; }
-  button:active { transform: scale(0.97); }
-  button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-
-  .result-area {
+  .status {
     width: 100%;
-    max-width: 540px;
+    max-width: 640px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+    min-height: 24px;
+    margin-bottom: 16px;
+  }
+  .status.error { color: var(--danger); }
+  .dot-spin {
+    display: inline-block;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 1s infinite;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50%      { opacity: .3; transform: scale(.6); }
   }
 
-  /* ── Profile card ── */
-  .profile-card {
+  .card {
+    width: 100%;
+    max-width: 640px;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 16px;
+    border-radius: var(--radius);
     overflow: hidden;
-    box-shadow: var(--card-shadow);
-    animation: fadeUp 0.3s ease;
+    display: none;
   }
+  .card.visible { display: block; }
 
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .card-header {
-    background: linear-gradient(135deg, #0d1a2e 0%, #12102a 100%);
-    padding: 28px 24px 20px;
+  .card-top {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 16px;
+    padding: 20px;
     border-bottom: 1px solid var(--border);
-    position: relative;
   }
-
-  .card-header::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(0,180,255,0.07), rgba(124,58,237,0.07));
-    pointer-events: none;
-  }
-
-  .avatar-wrap {
-    position: relative;
-    flex-shrink: 0;
-  }
-
-  .avatar-wrap img {
-    width: 72px;
-    height: 72px;
-    border-radius: 12px;
-    border: 2px solid var(--border);
-    display: block;
-    background: var(--surface2);
-  }
-
   .avatar-placeholder {
-    width: 72px;
-    height: 72px;
-    border-radius: 12px;
-    background: var(--surface2);
-    border: 2px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 30px;
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    background: var(--border);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--accent);
   }
-
-  .user-meta { flex: 1; min-width: 0; }
-
-  .username {
-    font-family: 'Space Grotesk', sans-serif;
+  .player-main { flex: 1; min-width: 0; }
+  .player-name {
+    font-family: 'Rajdhani', sans-serif;
     font-size: 22px;
     font-weight: 700;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-
-  .display-name {
-    color: var(--muted);
-    font-size: 13px;
-    margin-top: 2px;
-  }
-
-  .user-id {
-    display: inline-block;
-    margin-top: 8px;
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--accent);
-    background: rgba(0,180,255,0.1);
-    border: 1px solid rgba(0,180,255,0.2);
-    padding: 2px 8px;
-    border-radius: 20px;
-    letter-spacing: 0.3px;
-  }
-
-  .open-profile {
-    flex-shrink: 0;
-    background: transparent;
-    border: 1.5px solid var(--border);
-    color: var(--text);
+  .player-uid {
     font-size: 12px;
-    padding: 8px 14px;
-    border-radius: 8px;
-  }
-
-  .open-profile:hover { border-color: var(--accent); color: var(--accent); opacity: 1; }
-
-  .card-body { padding: 20px 24px; }
-
-  .bio {
-    font-size: 13px;
     color: var(--muted);
-    line-height: 1.6;
-    margin-bottom: 20px;
-    min-height: 20px;
+    margin-top: 2px;
+    font-family: monospace;
   }
+  .badge {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    padding: 4px 10px;
+    border-radius: 2px;
+    text-transform: uppercase;
+  }
+  .badge-active { background: rgba(0,208,132,.15); color: var(--success); border: 1px solid rgba(0,208,132,.3); }
+  .badge-banned  { background: rgba(255,68,68,.15);  color: var(--danger);  border: 1px solid rgba(255,68,68,.3); }
 
   .stats-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border);
   }
-
   .stat {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px 10px;
-    text-align: center;
+    padding: 16px;
+    border-right: 1px solid var(--border);
   }
-
-  .stat-value {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--text);
-  }
-
+  .stat:last-child { border-right: none; }
   .stat-label {
-    font-size: 11px;
-    color: var(--muted);
-    margin-top: 2px;
-  }
-
-  /* Friends */
-  .section-title {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--muted);
-    margin-bottom: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-  }
-
-  .friends-row {
-    display: flex;
-    gap: 10px;
-    overflow-x: auto;
-    padding-bottom: 4px;
-    scrollbar-width: none;
-  }
-
-  .friends-row::-webkit-scrollbar { display: none; }
-
-  .friend-chip {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-    min-width: 56px;
-    cursor: pointer;
-  }
-
-  .friend-chip img {
-    width: 48px;
-    height: 48px;
-    border-radius: 10px;
-    border: 1.5px solid var(--border);
-    background: var(--surface2);
-    transition: border-color 0.2s;
-  }
-
-  .friend-chip:hover img { border-color: var(--accent); }
-
-  .friend-chip span {
     font-size: 10px;
     color: var(--muted);
-    text-align: center;
-    max-width: 56px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 4px;
   }
+  .stat-value {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .stat-value.orange { color: var(--accent2); }
 
-  .no-friends {
-    font-size: 13px;
+  .details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .detail {
+    padding: 14px 16px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .detail:nth-child(even) { border-right: none; }
+  .detail:nth-last-child(-n+2) { border-bottom: none; }
+  .detail-label {
+    font-size: 10px;
     color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  .detail-value {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
   }
 
-  /* Status bar */
-  .status-msg {
-    text-align: center;
-    padding: 14px;
-    font-size: 14px;
-    color: var(--muted);
-  }
-
-  .error-msg {
-    background: rgba(248,113,113,0.08);
-    border: 1px solid rgba(248,113,113,0.2);
-    border-radius: 10px;
-    padding: 14px 18px;
-    color: var(--error);
-    font-size: 14px;
-    text-align: center;
-    animation: fadeUp 0.2s ease;
-  }
-
-  .spinner {
-    display: inline-block;
-    width: 18px;
-    height: 18px;
-    border: 2.5px solid rgba(255,255,255,0.1);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    vertical-align: middle;
-    margin-right: 8px;
-  }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .divider {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 16px 0;
-  }
-
-  /* Responsive */
   @media (max-width: 480px) {
-    .stats-grid { grid-template-columns: repeat(2, 1fr); }
-    .card-header { flex-wrap: wrap; }
-    .open-profile { width: 100%; text-align: center; margin-top: 4px; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .stats-grid .stat:nth-child(2) { border-right: none; }
+    .stats-grid .stat:nth-child(3) { border-top: 1px solid var(--border); grid-column: 1 / -1; }
   }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo-mark">
-    <div class="logo-icon">🎮</div>
-    <span style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:20px;">RobloxLookup</span>
-  </div>
-  <h1>Buscar jugador</h1>
-  <p class="subtitle">Ingresa un nombre de usuario para ver su perfil</p>
+  <div class="logo-label">Free Fire</div>
+  <h1>Buscar <span>Jugador</span></h1>
 </header>
 
-<div class="search-box">
-  <div class="search-row">
-    <input type="text" id="searchInput" placeholder="ej. Builderman" autocomplete="off" />
-    <button id="searchBtn" onclick="search()">Buscar</button>
+<div class="search-wrap">
+  <div class="region-row" id="regionRow">
+    <button class="region-btn active" data-region="ind">IND</button>
+    <button class="region-btn" data-region="sg">SG</button>
+    <button class="region-btn" data-region="br">BR</button>
+    <button class="region-btn" data-region="id">ID</button>
+    <button class="region-btn" data-region="me">ME</button>
+    <button class="region-btn" data-region="th">TH</button>
+    <button class="region-btn" data-region="vn">VN</button>
+    <button class="region-btn" data-region="bd">BD</button>
+  </div>
+  <div class="input-row">
+    <input type="text" id="uidInput" placeholder="ID del jugador (UID)" maxlength="20" inputmode="numeric">
+    <button class="search-btn" id="searchBtn" onclick="buscar()">Buscar</button>
   </div>
 </div>
 
-<div class="result-area" id="resultArea"></div>
+<div class="status" id="status"></div>
+
+<div class="card" id="resultCard">
+  <div class="card-top">
+    <div class="avatar-placeholder" id="avatarBox">?</div>
+    <div class="player-main">
+      <div class="player-name" id="pName">—</div>
+      <div class="player-uid" id="pUid">UID: —</div>
+    </div>
+    <span class="badge" id="banBadge">—</span>
+  </div>
+  <div class="stats-grid">
+    <div class="stat">
+      <div class="stat-label">Nivel</div>
+      <div class="stat-value" id="pLevel">—</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Likes</div>
+      <div class="stat-value orange" id="pLikes">—</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Región</div>
+      <div class="stat-value" id="pRegion">—</div>
+    </div>
+  </div>
+  <div class="details-grid">
+    <div class="detail">
+      <div class="detail-label">Gremio</div>
+      <div class="detail-value" id="pGuild">—</div>
+    </div>
+    <div class="detail">
+      <div class="detail-label">Rango BR</div>
+      <div class="detail-value" id="pRankBR">—</div>
+    </div>
+    <div class="detail">
+      <div class="detail-label">Rango CS</div>
+      <div class="detail-value" id="pRankCS">—</div>
+    </div>
+    <div class="detail">
+      <div class="detail-label">Último acceso</div>
+      <div class="detail-value" id="pLastLogin">—</div>
+    </div>
+  </div>
+</div>
 
 <script>
-  const input = document.getElementById('searchInput');
-  const btn   = document.getElementById('searchBtn');
-  const area  = document.getElementById('resultArea');
+  let region = 'ind';
 
-  input.addEventListener('keydown', e => { if (e.key === 'Enter') search(); });
+  document.getElementById('regionRow').addEventListener('click', e => {
+    const btn = e.target.closest('.region-btn');
+    if (!btn) return;
+    document.querySelectorAll('.region-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    region = btn.dataset.region;
+  });
 
-  function fmt(n) {
-    if (n == null) return '—';
-    if (n >= 1_000_000) return (n/1_000_000).toFixed(1) + 'M';
-    if (n >= 1_000)     return (n/1_000).toFixed(1) + 'K';
-    return n.toString();
+  document.getElementById('uidInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') buscar();
+  });
+
+  function setStatus(msg, isError = false, loading = false) {
+    const el = document.getElementById('status');
+    el.className = 'status' + (isError ? ' error' : '');
+    el.innerHTML = loading ? `<span class="dot-spin"></span>${msg}` : msg;
   }
 
-  function setLoading(on) {
-    btn.disabled = on;
-    btn.innerHTML = on ? '<span class="spinner"></span>Buscando' : 'Buscar';
+  function formatTimestamp(ts) {
+    if (!ts) return '—';
+    const d = new Date(Number(ts) * 1000);
+    return d.toLocaleDateString('es', { day:'2-digit', month:'short', year:'numeric' });
   }
 
-  function showError(msg) {
-    area.innerHTML = `<div class="error-msg">${msg}</div>`;
-  }
+  async function buscar() {
+    const uid = document.getElementById('uidInput').value.trim();
+    if (!uid) { setStatus('Ingresa un UID válido.', true); return; }
 
-  async function search() {
-    const username = input.value.trim();
-    if (!username) return;
-
-    setLoading(true);
-    area.innerHTML = `<p class="status-msg"><span class="spinner"></span>Buscando perfil…</p>`;
+    const btn = document.getElementById('searchBtn');
+    btn.disabled = true;
+    document.getElementById('resultCard').classList.remove('visible');
+    setStatus('Buscando jugador…', false, true);
 
     try {
-      /* 1. Resolve username → userId */
-      const userRes = await fetch(
-        `https://api.allorigins.win/get?url=${encodeURIComponent(
-          `https://users.roblox.com/v1/usernames/users`
-        )}`,
-        {
-          method: 'GET', // we'll POST via proxy differently below
-        }
-      );
+      // 👇 Cambia esta URL por la de tu API real
+      const url = `https://TU-API.com/freefireinfo?uid=${encodeURIComponent(uid)}&region=${region}`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`Error ${res.status}`);
+      const data = await res.json();
 
-      /* Use a CORS proxy for the POST request */
-      const proxyBase = 'https://api.allorigins.win/raw?url=';
+      const info   = data?.basicInfo   || data?.AccountInfo || data || {};
+      const guild  = data?.guildBasicInfo || data?.guild    || {};
+      const rankBR = data?.rankingInfo?.brRankPoint ?? data?.RankingInfo?.BrRankPoint ?? null;
+      const rankCS = data?.rankingInfo?.csRankPoint ?? data?.RankingInfo?.CsRankPoint ?? null;
 
-      // POST to resolve username
-      const resolveRes = await fetch('https://api.allorigins.win/raw?url=' +
-        encodeURIComponent('https://users.roblox.com/v1/usernames/users'), {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ usernames: [username], excludeBannedUsers: false })
-        }
-      ).catch(() => null);
+      const name      = info.nickname  ?? info.Nickname  ?? info.name ?? '—';
+      const level     = info.level     ?? info.Level     ?? '—';
+      const likes     = info.liked     ?? info.Liked     ?? info.exp  ?? '—';
+      const lastLogin = info.lastLoginAt ?? info.LastLoginAt ?? null;
+      const banStatus = data?.banInfo?.isInBlacklist ?? data?.BanInfo?.IsInBlacklist ?? false;
 
-      let userId = null;
+      document.getElementById('avatarBox').textContent = name.charAt(0).toUpperCase() || '?';
+      document.getElementById('pName').textContent     = name;
+      document.getElementById('pUid').textContent      = `UID: ${uid}`;
+      document.getElementById('pLevel').textContent    = level;
+      document.getElementById('pLikes').textContent    = Number(likes).toLocaleString('es');
+      document.getElementById('pRegion').textContent   = region.toUpperCase();
+      document.getElementById('pGuild').textContent    = guild.guildName ?? guild.GuildName ?? 'Sin gremio';
+      document.getElementById('pRankBR').textContent   = rankBR !== null ? rankBR : '—';
+      document.getElementById('pRankCS').textContent   = rankCS !== null ? rankCS : '—';
+      document.getElementById('pLastLogin').textContent = formatTimestamp(lastLogin);
 
-      if (resolveRes && resolveRes.ok) {
-        const data = await resolveRes.json();
-        if (data.data && data.data.length > 0) userId = data.data[0].id;
-      }
+      const badge = document.getElementById('banBadge');
+      badge.textContent = banStatus ? 'Baneado' : 'Activo';
+      badge.className   = 'badge ' + (banStatus ? 'badge-banned' : 'badge-active');
 
-      /* Fallback: search endpoint */
-      if (!userId) {
-        const searchRes = await fetch(
-          proxyBase + encodeURIComponent(
-            `https://users.roblox.com/v1/users/search?keyword=${encodeURIComponent(username)}&limit=5`
-          )
-        );
-        if (searchRes.ok) {
-          const sd = await searchRes.json();
-          if (sd.data && sd.data.length > 0) {
-            const match = sd.data.find(u => u.name.toLowerCase() === username.toLowerCase()) || sd.data[0];
-            userId = match.id;
-          }
-        }
-      }
-
-      if (!userId) { showError(`No se encontró ningún usuario con el nombre "<strong>${username}</strong>".`); setLoading(false); return; }
-
-      /* 2. Get user info */
-      const [infoRes, friendsRes, followersRes, followingsRes] = await Promise.all([
-        fetch(proxyBase + encodeURIComponent(`https://users.roblox.com/v1/users/${userId}`)),
-        fetch(proxyBase + encodeURIComponent(`https://friends.roblox.com/v1/users/${userId}/friends?limit=10`)),
-        fetch(proxyBase + encodeURIComponent(`https://friends.roblox.com/v1/users/${userId}/followers/count`)),
-        fetch(proxyBase + encodeURIComponent(`https://friends.roblox.com/v1/users/${userId}/followings/count`)),
-      ]);
-
-      const info      = infoRes.ok      ? await infoRes.json()      : {};
-      const friendsD  = friendsRes.ok   ? await friendsRes.json()   : {};
-      const followersD= followersRes.ok ? await followersRes.json() : {};
-      const followingsD=followingsRes.ok? await followingsRes.json(): {};
-
-      const friends   = friendsD.data   || [];
-      const follCount = followersD.count ?? '—';
-      const folwCount = followingsD.count?? '—';
-
-      /* 3. Avatar thumbnail */
-      const avatarRes = await fetch(
-        proxyBase + encodeURIComponent(
-          `https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${userId}&size=150x150&format=Png&isCircular=false`
-        )
-      );
-      const avatarD = avatarRes.ok ? await avatarRes.json() : {};
-      const avatarUrl = avatarD.data?.[0]?.imageUrl || null;
-
-      /* 4. Friend avatars (batch) */
-      let friendAvatars = {};
-      if (friends.length) {
-        const ids = friends.slice(0,10).map(f=>f.id).join(',');
-        const faRes = await fetch(
-          proxyBase + encodeURIComponent(
-            `https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${ids}&size=48x48&format=Png&isCircular=false`
-          )
-        );
-        if (faRes.ok) {
-          const faD = await faRes.json();
-          (faD.data||[]).forEach(d => { friendAvatars[d.targetId] = d.imageUrl; });
-        }
-      }
-
-      /* 5. Render */
-      const created = info.created ? new Date(info.created).toLocaleDateString('es-ES',{year:'numeric',month:'short',day:'numeric'}) : '—';
-      const bio = info.description ? info.description.trim().slice(0,180) + (info.description.length > 180 ? '…' : '') : 'Sin descripción.';
-
-      const avatarHTML = avatarUrl
-        ? `<img src="${avatarUrl}" alt="Avatar de ${info.name}" />`
-        : `<div class="avatar-placeholder">👤</div>`;
-
-      const friendsHTML = friends.length
-        ? friends.slice(0,10).map(f => `
-            <div class="friend-chip" onclick="loadUser('${f.name}')">
-              <img src="${friendAvatars[f.id] || ''}" alt="${f.name}"
-                   onerror="this.style.display='none'" />
-              <span>${f.name}</span>
-            </div>`).join('')
-        : `<p class="no-friends">Sin amigos públicos.</p>`;
-
-      area.innerHTML = `
-        <div class="profile-card">
-          <div class="card-header">
-            <div class="avatar-wrap">${avatarHTML}</div>
-            <div class="user-meta">
-              <div class="username">${info.name || username}</div>
-              ${info.displayName && info.displayName !== info.name
-                ? `<div class="display-name">${info.displayName}</div>` : ''}
-              <span class="user-id">ID: ${userId}</span>
-            </div>
-            <a href="https://www.roblox.com/users/${userId}/profile" target="_blank" rel="noopener">
-              <button class="open-profile">Ver en Roblox ↗</button>
-            </a>
-          </div>
-
-          <div class="card-body">
-            <p class="bio">${bio}</p>
-
-            <div class="stats-grid">
-              <div class="stat">
-                <div class="stat-value">${fmt(follCount)}</div>
-                <div class="stat-label">Seguidores</div>
-              </div>
-              <div class="stat">
-                <div class="stat-value">${fmt(folwCount)}</div>
-                <div class="stat-label">Siguiendo</div>
-              </div>
-              <div class="stat">
-                <div class="stat-value">${created}</div>
-                <div class="stat-label">Creado</div>
-              </div>
-            </div>
-
-            <hr class="divider" />
-
-            <p class="section-title">Amigos</p>
-            <div class="friends-row">${friendsHTML}</div>
-          </div>
-        </div>`;
-
-    } catch(err) {
-      showError('Ocurrió un error al conectar con la API de Roblox. Intenta de nuevo.');
-      console.error(err);
+      document.getElementById('resultCard').classList.add('visible');
+      setStatus('');
+    } catch (err) {
+      setStatus(`No se encontró el jugador o la API no respondió. (${err.message})`, true);
+    } finally {
+      btn.disabled = false;
     }
-
-    setLoading(false);
-  }
-
-  function loadUser(name) {
-    input.value = name;
-    search();
   }
 </script>
 </body>
