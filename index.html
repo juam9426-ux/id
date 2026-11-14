@@ -3,22 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Free Fire — UID Lookup</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Free Fire — Player Search</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:      #07090d;
-  --surf:    #101520;
-  --surf2:   #181f2e;
-  --border:  #222c40;
-  --gold:    #f5c518;
-  --gold2:   #f09020;
+  --bg:      #06080d;
+  --surf:    #0e1219;
+  --surf2:   #161c28;
+  --surf3:   #1d2535;
+  --border:  #252f44;
+  --gold:    #f4c430;
+  --gold2:   #e88c18;
   --blue:    #4a9eff;
-  --text:    #e2e8f4;
-  --muted:   #4e5f78;
-  --muted2:  #8898b4;
+  --green:   #34d399;
+  --red:     #f05252;
+  --purple:  #a78bfa;
+  --text:    #dde4f2;
+  --muted:   #4b5a72;
+  --muted2:  #8292aa;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
 
 body {
   background: var(--bg);
@@ -28,76 +33,92 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  padding: 56px 16px 80px;
+  padding: 48px 16px 80px;
 }
 
 /* ── Header ── */
-.header { text-align: center; margin-bottom: 48px; }
+.header { text-align: center; margin-bottom: 40px; }
 
-.ff-logo {
-  font-size: 52px;
+.glow-icon {
+  font-size: 54px;
   line-height: 1;
-  margin-bottom: 14px;
   display: block;
-  filter: drop-shadow(0 0 24px rgba(245,197,24,0.5));
-  animation: pulse 2.4s ease-in-out infinite;
-}
-@keyframes pulse {
-  0%,100%{ filter: drop-shadow(0 0 18px rgba(245,197,24,0.4)); }
-  50%    { filter: drop-shadow(0 0 32px rgba(245,197,24,0.75)); }
+  margin-bottom: 14px;
+  filter: drop-shadow(0 0 20px rgba(244,196,48,0.55));
 }
 
 h1 {
   font-family: 'Barlow Condensed', sans-serif;
-  font-size: clamp(38px, 8vw, 64px);
+  font-size: clamp(36px,8vw,60px);
   font-weight: 800;
   letter-spacing: 1px;
-  line-height: 1;
-  color: var(--text);
+  line-height: 1.05;
 }
-h1 em {
-  font-style: normal;
+h1 .hl {
   background: linear-gradient(90deg, var(--gold), var(--gold2));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
-.sub {
-  margin-top: 10px;
-  color: var(--muted2);
-  font-size: 14px;
-}
+.sub { color: var(--muted2); font-size: 14px; margin-top: 8px; }
 
-/* ── Card container ── */
-.card {
-  width: 100%;
-  max-width: 420px;
+/* ── Tabs ── */
+.tabs {
+  display: flex;
+  gap: 4px;
   background: var(--surf);
   border: 1px solid var(--border);
-  border-radius: 20px;
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 540px;
+}
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 9px 10px;
+  border-radius: 9px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  color: var(--muted2);
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+  user-select: none;
+}
+.tab.active {
+  background: var(--surf3);
+  color: var(--gold);
+  border: 1px solid rgba(244,196,48,0.2);
+}
+.tab:not(.active):hover { color: var(--text); }
+
+/* ── Panel ── */
+.panel {
+  width: 100%;
+  max-width: 540px;
+  background: var(--surf);
+  border: 1px solid var(--border);
+  border-radius: 18px;
   overflow: hidden;
+  margin-bottom: 20px;
 }
 
-/* search section */
-.search-sec {
-  padding: 24px 24px 20px;
-  border-bottom: 1px solid var(--border);
-}
+.panel-body { padding: 22px; }
 
-label {
-  display: block;
+.field-label {
   font-size: 11px;
   font-weight: 600;
   color: var(--muted2);
-  letter-spacing: 0.5px;
-  margin-bottom: 7px;
+  letter-spacing: 0.4px;
+  margin-bottom: 6px;
+  display: block;
 }
 
-.input-row {
-  display: flex;
-  gap: 10px;
-}
+.input-row { display: flex; gap: 10px; margin-bottom: 14px; }
+.input-row:last-child { margin-bottom: 0; }
 
 input[type="text"] {
   flex: 1;
@@ -105,315 +126,631 @@ input[type="text"] {
   border: 1.5px solid var(--border);
   color: var(--text);
   font-family: 'Barlow', sans-serif;
-  font-size: 16px;
-  padding: 12px 14px;
+  font-size: 15px;
+  padding: 11px 14px;
   border-radius: 10px;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.18s;
 }
 input::placeholder { color: var(--muted); }
 input:focus { border-color: var(--gold); }
 
-button {
+.btn {
   background: linear-gradient(135deg, var(--gold), var(--gold2));
-  color: #0a0c10;
+  color: #07090d;
   font-family: 'Barlow Condensed', sans-serif;
   font-size: 16px;
   font-weight: 800;
   letter-spacing: 0.5px;
   border: none;
   border-radius: 10px;
-  padding: 12px 20px;
+  padding: 11px 22px;
   cursor: pointer;
-  transition: opacity 0.18s, transform 0.1s;
   white-space: nowrap;
+  transition: opacity 0.18s, transform 0.1s;
 }
-button:hover   { opacity: 0.86; }
-button:active  { transform: scale(0.96); }
-button:disabled{ opacity: 0.35; cursor: not-allowed; transform: none; }
+.btn:hover   { opacity: 0.86; }
+.btn:active  { transform: scale(0.96); }
+.btn:disabled{ opacity: 0.35; cursor: not-allowed; transform: none; }
 
-/* result section */
-.result-sec { padding: 22px 24px; min-height: 60px; }
-
-/* empty state */
-.empty {
-  text-align: center;
-  padding: 12px 0 4px;
-  color: var(--muted);
-  font-size: 14px;
+/* ── Results ── */
+.result-wrap {
+  width: 100%;
+  max-width: 540px;
 }
 
-/* player result */
-.player {
+/* Search results list */
+.search-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  animation: fadeUp 0.28s ease;
+  gap: 10px;
+  animation: fadeUp 0.25s ease;
 }
-@keyframes fadeUp {
-  from { opacity:0; transform:translateY(10px); }
-  to   { opacity:1; transform:translateY(0); }
-}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-.player-name-row {
+.search-item {
+  background: var(--surf);
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  padding: 14px 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 12px;
+  cursor: pointer;
+  transition: border-color 0.18s, background 0.18s;
 }
+.search-item:hover { border-color: rgba(244,196,48,0.3); background: var(--surf2); }
 
-.nickname {
+.si-left { flex:1; min-width:0; }
+.si-nick {
   font-family: 'Barlow Condensed', sans-serif;
-  font-size: 32px;
+  font-size: 20px;
   font-weight: 800;
   color: var(--text);
-  word-break: break-word;
-  line-height: 1.1;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.si-uid { font-size: 12px; color: var(--muted2); margin-top: 2px; }
+.si-right { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+
+.badge {
+  font-size: 11px; font-weight: 700;
+  padding: 3px 10px; border-radius: 20px;
+  letter-spacing: 0.3px;
+}
+.badge-blue   { background:rgba(74,158,255,0.1); border:1px solid rgba(74,158,255,0.25); color:var(--blue); }
+.badge-gold   { background:rgba(244,196,48,0.1); border:1px solid rgba(244,196,48,0.22); color:var(--gold); }
+.badge-green  { background:rgba(52,211,153,0.1); border:1px solid rgba(52,211,153,0.22); color:var(--green); }
+.badge-purple { background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.22);color:var(--purple);}
+.badge-muted  { background:rgba(130,146,170,0.1);border:1px solid rgba(130,146,170,0.2); color:var(--muted2);}
+
+/* Profile card */
+.profile-card {
+  background: var(--surf);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+  animation: fadeUp 0.28s ease;
 }
 
-.region-badge {
-  flex-shrink: 0;
-  background: rgba(74,158,255,0.1);
-  border: 1px solid rgba(74,158,255,0.25);
-  color: var(--blue);
-  font-size: 12px;
-  font-weight: 700;
-  padding: 4px 12px;
-  border-radius: 20px;
-  letter-spacing: 0.4px;
+.pc-topbar {
+  height: 5px;
+  background: linear-gradient(90deg, var(--gold), var(--gold2), #e06030);
 }
 
-.info-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
+.pc-head {
+  padding: 20px 22px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
 }
 
-.info-box {
+.pc-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 30px; font-weight: 800;
+  color: var(--text); line-height: 1.1; word-break: break-word;
+}
+.pc-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+
+.pc-likes { text-align: right; flex-shrink: 0; }
+.pc-likes-num {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 28px; font-weight: 800; color: var(--gold); line-height: 1;
+}
+.pc-likes-lbl { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+.pc-sec { padding: 18px 22px; border-bottom: 1px solid var(--border); }
+.pc-sec:last-child { border-bottom: none; }
+.sec-label { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 0.7px; margin-bottom: 12px; }
+
+.grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+.grid-2 { display: grid; grid-template-columns: repeat(2,1fr); gap: 8px; }
+
+.stat-box {
   background: var(--surf2);
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 12px 14px;
+  padding: 12px 10px;
+  text-align: center;
 }
-.info-lbl { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
-.info-val {
+.stat-v {
   font-family: 'Barlow Condensed', sans-serif;
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--text);
-  word-break: break-all;
+  font-size: 20px; font-weight: 700; line-height:1;
+}
+.stat-l { font-size: 11px; color: var(--muted2); margin-top: 4px; }
+
+.rank-box {
+  background: var(--surf2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+}
+.rank-mode { font-size: 11px; font-weight: 600; color: var(--muted2); margin-bottom: 5px; }
+.rank-pts {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 24px; font-weight: 800; line-height:1;
+}
+.rank-max { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.rank-tier {
+  display: inline-block; margin-top: 7px;
+  font-size: 11px; font-weight: 700;
+  padding: 2px 10px; border-radius: 20px;
 }
 
-/* loading / error */
-.loading {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  justify-content: center;
-  padding: 10px 0;
+/* items chips */
+.items-wrap { display: flex; flex-wrap: wrap; gap: 6px; }
+.item-chip {
+  background: var(--surf2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 5px 10px;
+  font-size: 12px;
   color: var(--muted2);
-  font-size: 14px;
 }
+
+/* stats table */
+.stats-table { width: 100%; border-collapse: collapse; }
+.stats-table tr td {
+  padding: 7px 4px;
+  font-size: 13px;
+  border-bottom: 1px solid var(--border);
+}
+.stats-table tr:last-child td { border-bottom: none; }
+.stats-table td:first-child { color: var(--muted2); }
+.stats-table td:last-child { text-align: right; font-weight: 600; font-family: 'Barlow Condensed', sans-serif; font-size: 15px; }
+
+/* misc */
 .spinner {
-  width: 18px; height: 18px;
+  display: inline-block;
+  width: 16px; height: 16px;
   border: 2.5px solid rgba(255,255,255,0.08);
   border-top-color: var(--gold);
   border-radius: 50%;
   animation: spin 0.65s linear infinite;
-  flex-shrink: 0;
+  vertical-align: middle; margin-right: 8px;
 }
-@keyframes spin { to { transform:rotate(360deg); } }
+@keyframes spin{to{transform:rotate(360deg)}}
 
-.error {
-  background: rgba(255,70,70,0.07);
-  border: 1px solid rgba(255,70,70,0.2);
-  border-radius: 10px;
-  color: #f07070;
-  font-size: 13px;
-  padding: 12px 16px;
+.msg { text-align: center; padding: 20px; font-size: 14px; color: var(--muted2); }
+
+.error-box {
+  background: rgba(240,82,82,0.07);
+  border: 1px solid rgba(240,82,82,0.2);
+  border-radius: 12px;
+  padding: 14px 18px;
+  color: var(--red);
+  font-size: 14px;
   text-align: center;
+  animation: fadeUp 0.2s ease;
 }
 
-/* footer note */
-.powered {
-  margin-top: 10px;
-  font-size: 11px;
-  color: var(--muted);
-  text-align: center;
-}
-.powered a { color: var(--muted); text-decoration: underline; }
-
-/* history strip */
-.history-sec {
-  padding: 0 24px 20px;
-  display: none;
-}
-.history-title {
-  font-size: 11px;
-  color: var(--muted);
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  margin-bottom: 8px;
-}
-.history-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.chip {
-  background: var(--surf2);
+.back-btn {
+  background: transparent;
   border: 1px solid var(--border);
   color: var(--muted2);
-  font-size: 12px;
-  font-weight: 600;
-  padding: 4px 11px;
-  border-radius: 20px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 9px;
   cursor: pointer;
+  margin-bottom: 14px;
+  display: none;
+  letter-spacing: 0.3px;
   transition: border-color 0.15s, color 0.15s;
 }
-.chip:hover { border-color: var(--gold); color: var(--gold); }
+.back-btn:hover { border-color: var(--gold); color: var(--gold); }
+.back-btn.show { display: inline-block; }
 
-@media(max-width:380px){
-  .info-row { grid-template-columns: 1fr; }
-  .player-name-row { flex-direction: column; align-items: flex-start; }
+@media(max-width:420px){
+  .grid-3{grid-template-columns:repeat(2,1fr)}
+  .pc-head{flex-direction:column}
+  .pc-likes{text-align:left}
+  .input-row{flex-direction:column}
+  .btn{width:100%}
 }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <span class="ff-logo">🔥</span>
-  <h1>Free Fire<br><em>UID Lookup</em></h1>
-  <p class="sub">Busca cualquier jugador por su UID</p>
+  <span class="glow-icon">🎮</span>
+  <h1>Free Fire<br><span class="hl">Player Search</span></h1>
+  <p class="sub">Busca por nickname · Consulta perfil, stats e items</p>
 </div>
 
-<div class="card">
-  <div class="search-sec">
-    <label for="uidIn">UID del jugador</label>
-    <div class="input-row">
-      <input type="text" id="uidIn" placeholder="Ej: 6605263063" inputmode="numeric" autocomplete="off" />
-      <button id="btn" onclick="lookup()">Buscar</button>
-    </div>
-  </div>
+<!-- Tabs -->
+<div class="tabs">
+  <div class="tab active" id="tab-search" onclick="switchTab('search')">🔍 Buscar nickname</div>
+  <div class="tab" id="tab-uid"    onclick="switchTab('uid')">🆔 Buscar por UID</div>
+  <div class="tab" id="tab-stats"  onclick="switchTab('stats')">📊 Stats BR/CS</div>
+</div>
 
-  <div class="result-sec" id="resultSec">
-    <p class="empty">Ingresa un UID para ver el perfil</p>
-  </div>
-
-  <div class="history-sec" id="historySec">
-    <div class="history-title">Búsquedas recientes</div>
-    <div class="history-chips" id="historyChips"></div>
+<!-- Panel inputs -->
+<div class="panel" id="panel">
+  <div class="panel-body" id="panelBody">
+    <!-- Rendered by JS -->
   </div>
 </div>
 
-<p class="powered" style="margin-top:16px">
-  Powered by <a href="https://www.npmjs.com/package/free-fire-apis" target="_blank" rel="noopener">free-fire-apis</a> · MIT License
-</p>
+<!-- Results -->
+<div class="result-wrap">
+  <button class="back-btn" id="backBtn" onclick="goBack()">← Volver</button>
+  <div id="resultArea"></div>
+</div>
 
-<!-- Library from jsDelivr -->
-<script src="https://cdn.jsdelivr.net/npm/free-fire-apis@0.0.1/index.min.js"></script>
+<!-- ffapis CDN -->
+<script src="https://cdn.jsdelivr.net/npm/ffapis@3.0.1/dist/index.min.js"></script>
 
 <script>
-const uidIn   = document.getElementById('uidIn');
-const btn     = document.getElementById('btn');
-const resSec  = document.getElementById('resultSec');
-const hisSec  = document.getElementById('historySec');
-const hisChips= document.getElementById('historyChips');
+/* ── State ── */
+let currentTab = 'search';
+let lastSearchResults = null;
+let api = null;
 
-let history = JSON.parse(localStorage.getItem('ff_history') || '[]');
-
-uidIn.addEventListener('keydown', e => { if (e.key === 'Enter') lookup(); });
-
-renderHistory();
-
-function setLoading(on) {
-  btn.disabled = on;
-  btn.innerHTML = on
-    ? '<span class="spinner"></span>'
-    : 'Buscar';
-}
-
-function renderHistory() {
-  if (!history.length) return;
-  hisSec.style.display = 'block';
-  hisChips.innerHTML = history.slice(-6).reverse().map(h =>
-    `<span class="chip" onclick="loadHistory('${h}')">${h}</span>`
-  ).join('');
-}
-
-function loadHistory(uid) {
-  uidIn.value = uid;
-  lookup();
-}
-
-function saveHistory(uid) {
-  history = [...new Set([...history, uid])].slice(-10);
-  localStorage.setItem('ff_history', JSON.stringify(history));
-  renderHistory();
-}
-
-async function lookup() {
-  const rawUid = uidIn.value.trim();
-  if (!rawUid) return;
-  if (!/^\d+$/.test(rawUid)) {
-    resSec.innerHTML = `<div class="error">⚠️ El UID solo debe contener números.</div>`;
-    return;
+/* ── Init API ── */
+function getAPI() {
+  if (!api) {
+    // FreeFireAPI may be on window directly or namespaced
+    const ctor = window.FreeFireAPI || window.ffapis?.FreeFireAPI;
+    if (!ctor) throw new Error('ffapis library not loaded');
+    api = new ctor();
   }
+  return api;
+}
 
-  setLoading(true);
-  resSec.innerHTML = `
-    <div class="loading">
-      <div class="spinner"></div>
-      Buscando jugador…
-    </div>`;
+/* ── Tabs ── */
+function switchTab(tab) {
+  currentTab = tab;
+  ['search','uid','stats'].forEach(t => {
+    document.getElementById('tab-'+t).classList.toggle('active', t === tab);
+  });
+  renderPanel();
+  clearResult();
+}
+
+function renderPanel() {
+  const body = document.getElementById('panelBody');
+  if (currentTab === 'search') {
+    body.innerHTML = `
+      <label class="field-label">Nombre del jugador (nickname)</label>
+      <div class="input-row">
+        <input type="text" id="inSearch" placeholder="Ej: FannBot" autocomplete="off" />
+        <button class="btn" onclick="doSearch()">Buscar</button>
+      </div>`;
+    document.getElementById('inSearch').addEventListener('keydown', e => { if(e.key==='Enter') doSearch(); });
+  } else if (currentTab === 'uid') {
+    body.innerHTML = `
+      <label class="field-label">UID del jugador</label>
+      <div class="input-row">
+        <input type="text" id="inUID" placeholder="Ej: 7512027025" inputmode="numeric" autocomplete="off" />
+        <button class="btn" onclick="doProfile()">Ver perfil</button>
+      </div>`;
+    document.getElementById('inUID').addEventListener('keydown', e => { if(e.key==='Enter') doProfile(); });
+  } else {
+    body.innerHTML = `
+      <label class="field-label">UID del jugador</label>
+      <div class="input-row" style="margin-bottom:12px">
+        <input type="text" id="inStatsUID" placeholder="Ej: 7512027025" inputmode="numeric" autocomplete="off" />
+      </div>
+      <div class="input-row">
+        <select id="inMode" style="flex:1;background:var(--surf2);border:1.5px solid var(--border);color:var(--text);font-family:'Barlow',sans-serif;font-size:15px;padding:11px 14px;border-radius:10px;outline:none;cursor:pointer">
+          <option value="br">Battle Royale</option>
+          <option value="cs">Clash Squad</option>
+        </select>
+        <select id="inMatch" style="flex:1;background:var(--surf2);border:1.5px solid var(--border);color:var(--text);font-family:'Barlow',sans-serif;font-size:15px;padding:11px 14px;border-radius:10px;outline:none;cursor:pointer">
+          <option value="career">Career</option>
+          <option value="ranked">Ranked</option>
+          <option value="normal">Normal</option>
+        </select>
+        <button class="btn" onclick="doStats()">Ver stats</button>
+      </div>`;
+    document.getElementById('inStatsUID').addEventListener('keydown', e => { if(e.key==='Enter') doStats(); });
+  }
+}
+
+function clearResult() {
+  document.getElementById('resultArea').innerHTML = '';
+  document.getElementById('backBtn').classList.remove('show');
+}
+
+function goBack() {
+  if (lastSearchResults) renderSearchList(lastSearchResults);
+  document.getElementById('backBtn').classList.remove('show');
+}
+
+renderPanel();
+
+/* ── Helpers ── */
+function fmt(n) {
+  if (n == null) return '—';
+  if (n >= 1_000_000) return (n/1_000_000).toFixed(1)+'M';
+  if (n >= 1_000)     return (n/1_000).toFixed(1)+'K';
+  return Number(n).toLocaleString();
+}
+
+function rankTier(pts) {
+  if (pts >= 6000) return ['Heroico','#f4c430','rgba(244,196,48,0.12)'];
+  if (pts >= 5000) return ['Platino', '#8bd4f5','rgba(139,212,245,0.12)'];
+  if (pts >= 4000) return ['Oro',     '#e88c18','rgba(232,140,24,0.12)'];
+  if (pts >= 3000) return ['Plata',   '#c0c8d8','rgba(192,200,216,0.1)'];
+  if (pts >= 2000) return ['Bronce',  '#cd7f32','rgba(205,127,50,0.1)'];
+  return                  ['Hierro',  '#8292aa','rgba(130,146,170,0.1)'];
+}
+
+function setLoading(btnId, on, label='Buscar') {
+  const b = document.getElementById(btnId);
+  if (!b) return;
+  b.disabled = on;
+  b.innerHTML = on ? `<span class="spinner"></span>` : label;
+}
+
+function showError(msg) {
+  document.getElementById('resultArea').innerHTML = `<div class="error-box">⚠️ ${msg}</div>`;
+}
+
+/* ── Search ── */
+async function doSearch() {
+  const kw = document.getElementById('inSearch')?.value.trim();
+  if (!kw) return;
+  setLoading('inSearch', false); // keep input active
+  document.querySelectorAll('.btn').forEach(b => b.disabled = true);
+  document.getElementById('resultArea').innerHTML = `<p class="msg"><span class="spinner"></span>Buscando "${kw}"…</p>`;
+  clearBackBtn();
 
   try {
-    // The library exposes a global `uid` function
-    if (typeof uid === 'undefined') throw new Error('lib_not_loaded');
+    const a = getAPI();
+    const res = await a.searchAccount(kw);
+    const list = Array.isArray(res) ? res : (res.accountList || res.data || []);
+    if (!list.length) { showError('No se encontraron jugadores con ese nombre.'); document.querySelectorAll('.btn').forEach(b=>b.disabled=false); return; }
+    lastSearchResults = list;
+    renderSearchList(list);
+  } catch(e) {
+    showError('Error al buscar. Intenta de nuevo.');
+    console.error(e);
+  }
+  document.querySelectorAll('.btn').forEach(b=>b.disabled=false);
+}
 
-    const data = await uid(rawUid);
+function clearBackBtn() {
+  document.getElementById('backBtn').classList.remove('show');
+}
 
-    if (!data || (!data.Nickname && !data.nickname)) {
-      resSec.innerHTML = `<div class="error">No se encontró ningún jugador con ese UID.</div>`;
-      setLoading(false);
-      return;
-    }
+function renderSearchList(list) {
+  const html = list.map(p => {
+    const nick  = p.nickname || p.accountName || p.name || '—';
+    const uid   = p.accountId || p.uid || p.id || '—';
+    const lvl   = p.level || p.accountLevel || '';
+    const reg   = p.region || p.accountRegion || '';
+    return `<div class="search-item" onclick="loadProfileFromSearch('${uid}')">
+      <div class="si-left">
+        <div class="si-nick">${nick}</div>
+        <div class="si-uid">UID: ${uid}</div>
+      </div>
+      <div class="si-right">
+        ${reg ? `<span class="badge badge-blue">${reg}</span>` : ''}
+        ${lvl ? `<span class="badge badge-gold">Lv ${lvl}</span>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('resultArea').innerHTML = `<div class="search-list">${html}</div>`;
+}
 
-    const name   = data.Nickname   || data.nickname   || '—';
-    const region = data.Region     || data.region     || '—';
-    const uidOut = data.Uid        || data.uid        || rawUid;
-    const author = data.Author     || data.author     || '—';
+async function loadProfileFromSearch(uid) {
+  document.getElementById('backBtn').classList.add('show');
+  document.getElementById('resultArea').innerHTML = `<p class="msg"><span class="spinner"></span>Cargando perfil…</p>`;
+  try {
+    const a = getAPI();
+    const profile = await a.getPlayerProfile(String(uid));
+    renderProfile(profile);
+  } catch(e) {
+    showError('No se pudo cargar el perfil.');
+    console.error(e);
+  }
+}
 
-    saveHistory(rawUid);
+/* ── Profile ── */
+async function doProfile() {
+  const uid = document.getElementById('inUID')?.value.trim();
+  if (!uid) return;
+  if (!/^\d+$/.test(uid)) { showError('El UID solo debe contener números.'); return; }
+  document.querySelectorAll('.btn').forEach(b=>b.disabled=true);
+  document.getElementById('resultArea').innerHTML = `<p class="msg"><span class="spinner"></span>Cargando perfil…</p>`;
 
-    resSec.innerHTML = `
-      <div class="player">
-        <div class="player-name-row">
-          <div class="nickname">${name}</div>
-          <span class="region-badge">${region}</span>
-        </div>
-        <div class="info-row">
-          <div class="info-box">
-            <div class="info-lbl">UID</div>
-            <div class="info-val">${uidOut}</div>
-          </div>
-          <div class="info-box">
-            <div class="info-lbl">Región</div>
-            <div class="info-val">${region}</div>
+  try {
+    const a = getAPI();
+    const profile = await a.getPlayerProfile(uid);
+    renderProfile(profile);
+  } catch(e) {
+    showError('UID no encontrado o error de conexión.');
+    console.error(e);
+  }
+  document.querySelectorAll('.btn').forEach(b=>b.disabled=false);
+}
+
+function renderProfile(profile) {
+  // Normalize keys — different lib versions use different naming
+  const B = profile.basicinfo || profile.basicInfo || profile.AccountInfo || profile || {};
+  const P = profile.profileInfo || profile.AccountProfileInfo || {};
+  const G = profile.guildInfo  || profile.GuildInfo || null;
+  const items = profile.equippedItems || profile.items || [];
+
+  const nick  = B.nickname    || B.accountName  || B.AccountName  || '—';
+  const level = B.level       || B.accountLevel || B.AccountLevel || '—';
+  const region= B.region      || B.accountRegion|| B.AccountRegion|| '—';
+  const likes = B.liked       || B.AccountLikes || 0;
+  const exp   = B.exp         || B.AccountEXP   || 0;
+  const uid   = B.accountid   || B.AccountId    || B.uid          || '—';
+  const season= B.seasonId    || B.AccountSeasonId || '—';
+  const created = B.createAt  || B.AccountCreateTime || null;
+  const lastLogin = B.lastLoginAt || B.AccountLastLogin || null;
+
+  const brPts = P.rankPoint   || P.BrRankPoint  || 0;
+  const brMax = P.maxRankPoint|| P.BrMaxRank     || 0;
+  const csPts = P.csRankPoint || P.CsRankPoint   || 0;
+  const csMax = P.csMaxRankPoint || P.CsMaxRank  || 0;
+
+  const [brTier,brCol,brBg] = rankTier(brPts);
+  const [csTier,csCol,csBg] = rankTier(csPts);
+
+  function ts(unix) {
+    if (!unix) return '—';
+    return new Date(Number(unix)*1000).toLocaleDateString('es-ES',{year:'numeric',month:'short',day:'numeric'});
+  }
+
+  let guildHTML = '';
+  if (G && (G.guildName || G.GuildName)) {
+    const gname = G.guildName || G.GuildName;
+    const glvl  = G.guildLevel|| G.GuildLevel || '—';
+    const gmem  = G.memberNum || G.GuildMember|| '—';
+    guildHTML = `
+      <div class="pc-sec">
+        <div class="sec-label">Guild</div>
+        <div style="display:flex;align-items:center;gap:14px">
+          <div style="width:44px;height:44px;background:var(--surf2);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">🛡️</div>
+          <div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800">${gname}</div>
+            <div style="font-size:12px;color:var(--muted2);margin-top:2px">Nivel ${glvl} · ${gmem} miembros</div>
           </div>
         </div>
       </div>`;
-
-  } catch (err) {
-    if (err.message === 'lib_not_loaded') {
-      resSec.innerHTML = `<div class="error">La librería no cargó. Revisa tu conexión e intenta de nuevo.</div>`;
-    } else {
-      resSec.innerHTML = `<div class="error">UID inválido o error de red. Verifica el UID e intenta de nuevo.</div>`;
-    }
-    console.error(err);
   }
 
-  setLoading(false);
+  let itemsHTML = '';
+  if (items.length) {
+    const chips = items.slice(0,16).map(i => {
+      const name = i.name || i.itemName || `ID ${i.id||i.itemId||'?'}`;
+      return `<span class="item-chip">${name}</span>`;
+    }).join('');
+    itemsHTML = `
+      <div class="pc-sec">
+        <div class="sec-label">Items equipados</div>
+        <div class="items-wrap">${chips}</div>
+      </div>`;
+  }
+
+  document.getElementById('resultArea').innerHTML = `
+    <div class="profile-card">
+      <div class="pc-topbar"></div>
+      <div class="pc-head">
+        <div>
+          <div class="pc-name">${nick}</div>
+          <div class="pc-tags">
+            <span class="badge badge-blue">${region}</span>
+            <span class="badge badge-gold">Lv ${level}</span>
+            ${season !== '—' ? `<span class="badge badge-muted">Temp. ${season}</span>` : ''}
+          </div>
+        </div>
+        <div class="pc-likes">
+          <div class="pc-likes-num">${fmt(likes)}</div>
+          <div class="pc-likes-lbl">❤️ likes</div>
+        </div>
+      </div>
+
+      <div class="pc-sec">
+        <div class="sec-label">General</div>
+        <div class="grid-3">
+          <div class="stat-box"><div class="stat-v">${level}</div><div class="stat-l">Nivel</div></div>
+          <div class="stat-box"><div class="stat-v">${fmt(exp)}</div><div class="stat-l">EXP</div></div>
+          <div class="stat-box"><div class="stat-v">${fmt(likes)}</div><div class="stat-l">Likes</div></div>
+        </div>
+      </div>
+
+      <div class="pc-sec">
+        <div class="sec-label">Rango</div>
+        <div class="grid-2">
+          <div class="rank-box">
+            <div class="rank-mode">Battle Royale</div>
+            <div class="rank-pts">${brPts.toLocaleString()}</div>
+            <div class="rank-max">Máx: ${brMax.toLocaleString()}</div>
+            <span class="rank-tier" style="color:${brCol};background:${brBg};border:1px solid ${brCol}44">${brTier}</span>
+          </div>
+          <div class="rank-box">
+            <div class="rank-mode">Clash Squad</div>
+            <div class="rank-pts">${csPts.toLocaleString()}</div>
+            <div class="rank-max">Máx: ${csMax.toLocaleString()}</div>
+            <span class="rank-tier" style="color:${csCol};background:${csBg};border:1px solid ${csCol}44">${csTier}</span>
+          </div>
+        </div>
+      </div>
+
+      ${guildHTML}
+      ${itemsHTML}
+
+      <div class="pc-sec">
+        <div class="sec-label">Actividad</div>
+        <div class="grid-2">
+          <div class="stat-box" style="text-align:left;padding:12px 14px">
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px">Último acceso</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700">${ts(lastLogin)}</div>
+          </div>
+          <div class="stat-box" style="text-align:left;padding:12px 14px">
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px">Cuenta creada</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700">${ts(created)}</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ── Stats ── */
+async function doStats() {
+  const uid   = document.getElementById('inStatsUID')?.value.trim();
+  const mode  = document.getElementById('inMode')?.value  || 'br';
+  const match = document.getElementById('inMatch')?.value || 'career';
+  if (!uid) return;
+  if (!/^\d+$/.test(uid)) { showError('El UID solo debe contener números.'); return; }
+
+  document.querySelectorAll('.btn').forEach(b=>b.disabled=true);
+  const modeLabel = mode === 'br' ? 'Battle Royale' : 'Clash Squad';
+  document.getElementById('resultArea').innerHTML = `<p class="msg"><span class="spinner"></span>Cargando stats ${modeLabel} ${match}…</p>`;
+
+  try {
+    const a = getAPI();
+    const stats = await a.getPlayerStats(uid, mode, match);
+    renderStats(stats, mode, match);
+  } catch(e) {
+    showError('No se pudieron cargar las stats. Verifica el UID.');
+    console.error(e);
+  }
+  document.querySelectorAll('.btn').forEach(b=>b.disabled=false);
+}
+
+function renderStats(stats, mode, match) {
+  // Flatten nested stats object
+  const S = stats.stats || stats.playerStats || stats || {};
+  const modeLabel = mode === 'br' ? 'Battle Royale' : 'Clash Squad';
+
+  const rows = [
+    ['Partidas jugadas', S.games        || S.matches     || S.totalGames],
+    ['Victorias (Booyah)', S.wins       || S.totalWins],
+    ['Tasa de victorias', S.winRate     != null ? (S.winRate+'%') : (S.wins && S.games ? Math.round(S.wins/S.games*100)+'%' : null)],
+    ['Kills totales',    S.kills        || S.totalKills],
+    ['K/D ratio',        S.kd          || S.kdRatio      || S.kdr],
+    ['Headshots',        S.headshots   || S.headshotKills],
+    ['Daño promedio',    S.avgDamage   || S.damagePerGame],
+    ['Mejor racha',      S.bestKills   || S.maxKills],
+  ].filter(([,v]) => v != null && v !== '' && v !== 0 && v !== '0%');
+
+  if (!rows.length) {
+    document.getElementById('resultArea').innerHTML = `<div class="error-box">No hay datos de stats disponibles para este UID.</div>`;
+    return;
+  }
+
+  const tableRows = rows.map(([label, val]) =>
+    `<tr><td>${label}</td><td>${val}</td></tr>`
+  ).join('');
+
+  document.getElementById('resultArea').innerHTML = `
+    <div class="profile-card" style="animation:fadeUp 0.28s ease">
+      <div class="pc-topbar"></div>
+      <div class="pc-sec">
+        <div class="sec-label">${modeLabel} · ${match.toUpperCase()}</div>
+        <table class="stats-table">${tableRows}</table>
+      </div>
+    </div>`;
 }
 </script>
 </body>
